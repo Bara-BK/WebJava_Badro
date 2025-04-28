@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="mainAnchorPane" prefHeight="638.0" prefWidth="952.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.badro.Controllers.PreferenceController">
+   <children>
+      <BorderPane prefHeight="638.0" prefWidth="952.0">
+         <left>
+            <VBox prefHeight="588.0" prefWidth="190.0" style="-fx-background-color: #307D91;" BorderPane.alignment="CENTER">
+               <children>
+                  <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="33.0" prefWidth="190.0" text="Profile">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icones/Profile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="33.0" prefWidth="190.0" text="Preferences">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icones/Preference.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="33.0" prefWidth="190.0" text="Matching">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icones/Matching.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="33.0" prefWidth="190.0" text="Programs">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icones/Programs.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="33.0" prefWidth="190.0" text="Country Guide">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icones/Guide.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="33.0" prefWidth="190.0" text="Event">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icones/Event.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="33.0" prefWidth="190.0" text="Participation">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icones/Participation.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="33.0" prefWidth="190.0" text="Experience">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icones/Experience.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="33.0" prefWidth="190.0" text="Reply">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icones/Reply.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
+         </left>
+         <top>
+            <HBox prefHeight="47.0" prefWidth="870.0" style="-fx-background-color: #024F65;" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fitHeight="44.0" fitWidth="102.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icones/LOGO.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+         </top>
+         <center>
+            <BorderPane prefHeight="589.0" prefWidth="757.0" BorderPane.alignment="CENTER">
+               <top>
+                  <HBox prefHeight="48.0" prefWidth="762.0" style="-fx-background-color: #024F65;" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label alignment="CENTER_RIGHT" text="Preferences" textFill="WHITE">
+                           <font>
+                              <Font name="Bauhaus 93" size="29.0" />
+                           </font>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </Label>
+                     </children>
+                  </HBox>
+               </top>
+               <left>
+                  <TabPane fx:id="tabPane" prefHeight="543.0" prefWidth="763.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                    <tabs>
+                      <Tab text="List">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="514.0" prefWidth="349.0">
+                                 <children>
+                                    <BorderPane prefHeight="515.0" prefWidth="761.0">
+                                       <center>
+                                          <TableView fx:id="preferenceTable" blendMode="DARKEN" prefHeight="262.0" prefWidth="357.0" BorderPane.alignment="CENTER">
+                                            <columns>
+                                              <TableColumn fx:id="climatColumn" prefWidth="75.0" text="Climat" />
+                                              <TableColumn fx:id="countryColumn" prefWidth="89.59998321533203" text="Country" />
+                                                <TableColumn fx:id="domainColumn" prefWidth="108.0" text="Domain" />
+                                                <TableColumn fx:id="preferredLanguageColumn" prefWidth="120.79998779296875" text="Preferred Language" />
+                                                <TableColumn fx:id="teachingModeColumn" prefWidth="97.5999755859375" text="Teaching Mode" />
+                                                <TableColumn fx:id="universityTypeColumn" prefWidth="101.59994506835938" text="University Type" />
+                                                <TableColumn fx:id="culturalActivitiesColumn" prefWidth="169.5999755859375" text="Cultural Activities" />
+                                                <TableColumn fx:id="levelColumn" prefWidth="38.4000244140625" text="Level" />
+                                            </columns>
+                                          </TableView>
+                                       </center>
+                                       <bottom>
+                                          <Button mnemonicParsing="false" onAction="#supprimerPreference" text="Delete" BorderPane.alignment="CENTER" />
+                                       </bottom>
+                                    </BorderPane>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                       <Tab fx:id="tabAdd" text="Add">
+                          <content>
+                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="514.0" prefWidth="722.0">
+                                <children>
+                                   <Label layoutX="23.0" layoutY="14.0" prefHeight="18.0" prefWidth="46.0" text="*Climat :" />
+                                   <ComboBox fx:id="countryComboBox" editable="true" layoutX="23.0" layoutY="116.0" prefWidth="150.0" promptText="Country" AnchorPane.rightAnchor="589.8000000000001" />
+                                   <Label layoutX="23.0" layoutY="86.0" text="*Country :" />
+                                   <Label layoutX="26.0" layoutY="163.0" text="*Domain :" />
+                                   <Label layoutX="28.0" layoutY="240.0" text="*Preferred Language :" />
+                                   <RadioButton fx:id="englishRadio" layoutX="27.0" layoutY="273.0" mnemonicParsing="false" text="English" />
+                                   <RadioButton fx:id="frenchRadio" layoutX="100.0" layoutY="273.0" mnemonicParsing="false" text="French" />
+                                   <RadioButton fx:id="arabicRadio" layoutX="174.0" layoutY="273.0" mnemonicParsing="false" text="Arabic" />
+                                   <Label layoutX="27.0" layoutY="384.0" text="*Teaching Mode :" />
+                                   <RadioButton fx:id="onlineRadio" layoutX="29.0" layoutY="416.0" mnemonicParsing="false" text="Online" />
+                                   <RadioButton fx:id="inPersonRadio" layoutX="117.0" layoutY="416.0" mnemonicParsing="false" text="In-person classes" />
+                                   <Label layoutX="27.0" layoutY="448.0" text="*University Type :" />
+                                   <Label layoutX="325.0" layoutY="16.0" text="*Language Level :" />
+                                   <TextField fx:id="levelTextField" layoutX="325.0" layoutY="44.0" />
+                                   <Label layoutX="27.0" layoutY="313.0" text="*Cultural Activities :" />
+                                   <Button fx:id="addPreferenceButton" layoutX="650.0" layoutY="474.0" mnemonicParsing="false" onAction="#handleAddPreference" text="Add preference" />
+                                    <Button fx:id="clearForm" layoutX="593.0" layoutY="475.0" mnemonicParsing="false" text="Reset" />
+                                    <Button layoutX="533.0" layoutY="475.0" mnemonicParsing="false" onAction="#modifierPreference" text="Update" />
+                                    <TextField fx:id="Climat" layoutX="24.0" layoutY="43.0" />
+                                    <TextField fx:id="Domain" layoutX="24.0" layoutY="196.0" />
+                                    <TextField fx:id="UniversityType" layoutX="27.0" layoutY="474.0" prefHeight="26.0" prefWidth="118.0" />
+                                    <Label layoutX="75.0" layoutY="14.0" text="( Temperate - Winter - Cold - Tropical )" />
+                                    <Label layoutX="85.0" layoutY="163.0" text="( Philosophy - Agriculture, Environmental - Information and communication - Education - Health - Marketing ) " />
+                                    <TextField fx:id="culturalAct" layoutX="26.0" layoutY="349.0" />
+                                    <Label layoutX="144.0" layoutY="313.0" text="( Visiting a museum - Volunteering - Music and singing - Photography and film )" />
+                                </children>
+                             </AnchorPane>
+                          </content>
+                       </Tab>
+                    </tabs>
+                  </TabPane>
+               </left>
+            </BorderPane>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

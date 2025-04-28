@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.badro.Controllers.PreferencesController">
+    <top>
+        <Label style="-fx-font-size: 20px; -fx-padding: 10;" text="Gestion des Préférences" BorderPane.alignment="CENTER" />
+    </top>
+
+    <center>
+        <TableView fx:id="tableView" prefHeight="200">
+            <columns>
+                <TableColumn fx:id="colClimat" text="Climat" />
+                <TableColumn fx:id="colCountry" text="Pays" />
+                <TableColumn fx:id="colDomain" text="Domaine" />
+                <TableColumn fx:id="colLanguage" text="Langue" />
+                <TableColumn fx:id="colTeaching" text="Mode" />
+                <TableColumn fx:id="colUniversity" text="Université" />
+                <TableColumn fx:id="colActivities" text="Activités" />
+                <TableColumn fx:id="colLanguageLevel" text="Niveau" />
+            </columns>
+        </TableView>
+    </center>
+
+    <bottom>
+
+        <VBox spacing="10">
+            <padding>
+                <Insets bottom="10" left="10" right="10" top="10" />
+            </padding>
+            <GridPane hgap="10" vgap="10">
+                <TextField fx:id="climatField" promptText="Climat" />
+                <TextField fx:id="countryField" promptText="Pays" GridPane.columnIndex="1" />
+                <TextField fx:id="domainField" promptText="Domaine" GridPane.rowIndex="1" />
+                <TextField fx:id="languageField" promptText="Langue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <TextField fx:id="teachingModeField" promptText="Mode" GridPane.rowIndex="2" />
+                <TextField fx:id="universityTypeField" promptText="Université" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="culturalActivitiesField" promptText="Activités" GridPane.rowIndex="3" />
+                <TextField fx:id="languageLevelField" promptText="Niveau" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <columnConstraints>
+               <ColumnConstraints />
+               <ColumnConstraints />
+            </columnConstraints>
+            <rowConstraints>
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+            </rowConstraints>
+            </GridPane>
+            <Button fx:id="Ajout" onAction="#ajouter" onMouseClicked="#ajouter" prefWidth="200" style="-fx-font-weight: bold;" text="Ajouter" />
+        </VBox>
+    </bottom>
+</BorderPane>
