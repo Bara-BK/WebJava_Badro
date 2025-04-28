@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ParticipationService {
     private final EventService eventService = new EventService();
@@ -35,7 +37,7 @@ public class ParticipationService {
     }
 
     public Optional<Participation> getParticipationById(Integer id) {
-        String sql = "SELECT * FROM participation WHERE id = ?";
+        String sql = "SELECT * FROM participation WHERE participant_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -71,7 +73,7 @@ public class ParticipationService {
     }
 
     public void updateParticipation(Integer id, Participation participation) {
-        String sql = "UPDATE participation SET id_event = ?, nom_participant = ?, date_inscription = ?, evenement_nom = ?, telephone_number = ?, ticket_code = ?, paiment_method = ? WHERE id = ?";
+        String sql = "UPDATE participation SET id_event = ?, nom_participant = ?, date_inscription = ?, evenement_nom = ?, telephone_number = ?, ticket_code = ?, paiment_method = ? WHERE participant_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, participation.getIdEvent());
@@ -91,7 +93,7 @@ public class ParticipationService {
     }
 
     public void deleteParticipation(Integer id) {
-        String sql = "DELETE FROM participation WHERE id = ?";
+        String sql = "DELETE FROM participation WHERE participant_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -105,7 +107,7 @@ public class ParticipationService {
 
     private Participation mapToParticipation(ResultSet rs) throws SQLException {
         Participation participation = new Participation();
-        participation.setId(rs.getInt("id"));
+        participation.setParticipantId(rs.getInt("participant_id"));
         participation.setIdEvent(rs.getInt("id_event"));
         participation.setNomParticipant(rs.getString("nom_participant"));
         participation.setDateInscription(rs.getObject("date_inscription", LocalDate.class));
@@ -114,5 +116,16 @@ public class ParticipationService {
         participation.setTicketCode(rs.getString("ticket_code"));
         participation.setPaimentMethod(rs.getString("paiment_method"));
         return participation;
+    }
+
+    public Map<String, Long> getParticipantCountByEventType() {
+        List<Event> events = eventService.getAllEvents();
+        return events.stream()
+                .collect(Collectors.groupingBy(
+                        event -> event.getType() != null ? event.getType() : "None",
+                        Collectors.summingLong(event -> 
+                            getParticipationsByEventId(event.getEventId()).size()
+                        )
+                ));
     }
 }

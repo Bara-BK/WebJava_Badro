@@ -1,0 +1,102 @@
+.root {
+    -fx-background-color: linear-gradient(to bottom, #6495ED, #ADD8E6);
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+}
+
+.calendar-header {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-alignment: center;
+    -fx-padding: 5px;
+    -fx-background-color: #F5F6F5;
+    -fx-border-color: #D3D3D3;
+    -fx-border-width: 1px;
+}
+
+.calendar-day {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D3D3D3;
+    -fx-border-width: 1px;
+    -fx-padding: 5px;
+    -fx-min-height: 100px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.calendar-day:hover {
+    -fx-background-color: #F0F8FF;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 2);
+}
+
+.day-number {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-padding: 2px 5px;
+}
+
+.event-label {
+    -fx-background-color: #E6E6FA;
+    -fx-padding: 4px 8px;
+    -fx-margin: 2px 0;
+    -fx-font-size: 11px;
+    -fx-text-fill: #333333;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.event-label.entertainment {
+    -fx-background-color: #FFD700;
+}
+
+.event-label.cultural {
+    -fx-background-color: #FF69B4;
+}
+
+.event-label.educational {
+    -fx-background-color: #4682B4;
+}
+
+.event-label.sports {
+    -fx-background-color: #32CD32;
+}
+
+.button {
+    -fx-background-color: #4682B4;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-padding: 5px 15px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.button:hover {
+    -fx-background-color: #5A9BD4;
+    -fx-cursor: hand;
+}
+
+.text-field, .combo-box, .date-picker, .choice-box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D3D3D3;
+    -fx-border-width: 1px;
+    -fx-padding: 5px;
+    -fx-font-size: 12px;
+}
+
+.alert .dialog-pane {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D3D3D3;
+    -fx-border-width: 1px;
+}
+
+.alert .header-panel {
+    -fx-background-color: #4682B4;
+    -fx-text-fill: #FFFFFF;
+}
+
+.alert .button {
+    -fx-background-color: #4682B4;
+    -fx-text-fill: #FFFFFF;
+}

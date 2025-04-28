@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <VBox alignment="CENTER" spacing="10">
+            <ImageView fx:id="logoView" fitWidth="150" fitHeight="50" preserveRatio="true" styleClass="logo">
+                <image>
+                    <Image url="/images/logo.png"/>
+                </image>
+            </ImageView>
+            <Label fx:id="titleLabel" text="Participations" styleClass="title"/>
+            <TextField fx:id="searchField" promptText="Search by name or ticket..." styleClass="search-field" onKeyReleased="#filterParticipations"/>
+            <ChoiceBox fx:id="sortChoiceBox" styleClass="choice-box" onAction="#sortParticipations"/>
+            <Button fx:id="createButton" text="Add Participant" styleClass="primary-button" onAction="#handleCreateParticipation"/>
+            <Button fx:id="backButton" text="Back to Event" styleClass="secondary-button" onAction="#handleBackToEvent"/>
+        </VBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox fx:id="participationsBox" alignment="TOP_CENTER" spacing="10" styleClass="participation-list"/>
+        </ScrollPane>
+    </center>
+</BorderPane>

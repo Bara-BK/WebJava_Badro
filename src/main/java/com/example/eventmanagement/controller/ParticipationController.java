@@ -1,178 +1,80 @@
 package com.example.eventmanagement.controller;
 
+import com.example.eventmanagement.entity.Event;
 import com.example.eventmanagement.entity.Participation;
 import com.example.eventmanagement.service.EventService;
 import com.example.eventmanagement.service.ParticipationService;
-import javafx.geometry.Insets;
+import com.example.eventmanagement.util.TicketPDFGenerator;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.time.LocalDate;
+import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class ParticipationController {
-    private final ParticipationService participationService = new ParticipationService();
+    private final EventService eventService;
+    private final ParticipationService participationService;
     private Stage stage;
+    private Integer currentEventId;
+    private Integer currentParticipationId;
     private Runnable backToEventView;
+    private FilteredList<Participation> filteredParticipations;
+    private SortedList<Participation> sortedParticipations;
 
-    public VBox getParticipationListView(Integer eventId) {
-        VBox view = new VBox(10);
-        view.setPadding(new Insets(20));
-        view.setAlignment(Pos.CENTER);
+    // Common data
+    private ObservableList<String> sortOptions = FXCollections.observableArrayList("Sort by Name", "Sort by Date", "Sort by ID");
 
-        Label titleLabel = new Label("Participations");
-        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+    // ParticipationListView.fxml
+    @FXML private BorderPane root;
+    @FXML private ImageView logoView;
+    @FXML private Label titleLabel;
+    @FXML private TextField searchField;
+    @FXML private ChoiceBox<String> sortChoiceBox;
+    @FXML private Button createButton;
+    @FXML private Button backButton;
+    @FXML private VBox participationsBox;
 
-        Button createButton = new Button("Add Participation");
-        createButton.setStyle("-fx-font-size: 14px;");
-        createButton.setOnAction(e -> showCreateParticipationForm(eventId));
+    // CreateParticipationForm.fxml / EditParticipationForm.fxml
+    @FXML private VBox form;
+    @FXML private TextField nameField;
+    @FXML private DatePicker dateField;
+    @FXML private TextField eventNameField;
+    @FXML private TextField phoneField;
+    @FXML private TextField ticketCodeField;
+    @FXML private TextField paymentMethodField;
+    @FXML private Label errorLabel;
+    @FXML private Button saveButton;
+    @FXML private Button cancelButton;
 
-        List<Participation> participations = participationService.getParticipationsByEventId(eventId);
-        VBox participationsBox = new VBox(5);
-        if (participations.isEmpty()) {
-            Label noParticipationsLabel = new Label("No participations found. Add one!");
-            noParticipationsLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
-            participationsBox.getChildren().add(noParticipationsLabel);
-        } else {
-            for (Participation p : participations) {
-                HBox participationBox = new HBox(15);
-                Label nameLabel = new Label(p.getNomParticipant());
-                nameLabel.setStyle("-fx-font-size: 14px;");
-                nameLabel.setPrefWidth(200);
-                Button editButton = new Button("Edit");
-                editButton.setStyle("-fx-font-size: 12px;");
-                Button deleteButton = new Button("Delete");
-                deleteButton.setStyle("-fx-font-size: 12px;");
-                editButton.setOnAction(e -> showEditParticipationForm(p.getId()));
-                deleteButton.setOnAction(e -> {
-                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + p.getNomParticipant() + "?", ButtonType.YES, ButtonType.NO);
-                    confirm.showAndWait().ifPresent(type -> {
-                        if (type == ButtonType.YES) {
-                            participationService.deleteParticipation(p.getId());
-                            refreshList(eventId);
-                        }
-                    });
-                });
-                participationBox.getChildren().addAll(nameLabel, editButton, deleteButton);
-                participationsBox.getChildren().add(participationBox);
-            }
-        }
+    // ParticipationView.fxml
+    @FXML private VBox view;
+    @FXML private Label nameLabelView;
+    @FXML private Text dateText;
+    @FXML private Text eventNameText;
+    @FXML private Text phoneText;
+    @FXML private Text ticketCodeText;
+    @FXML private Text paymentMethodText;
+    @FXML private Button exportButton;
 
-        Button backButton = new Button("Back to Event");
-        backButton.setStyle("-fx-font-size: 14px;");
-        backButton.setOnAction(e -> backToEventView.run());
-
-        view.getChildren().addAll(titleLabel, createButton, participationsBox, backButton);
-        return view;
-    }
-
-    private void showCreateParticipationForm(Integer eventId) {
-        VBox form = new VBox(10);
-        form.setPadding(new Insets(20));
-        form.setAlignment(Pos.CENTER);
-
-        TextField nameField = new TextField();
-        nameField.setPromptText("Participant Name (2-255 characters)");
-        DatePicker dateField = new DatePicker();
-        dateField.setPromptText("Registration Date (optional)");
-        TextField eventNameField = new TextField();
-        eventNameField.setPromptText("Event Name (optional)");
-        TextField phoneField = new TextField();
-        phoneField.setPromptText("Phone Number (optional)");
-        TextField ticketCodeField = new TextField();
-        ticketCodeField.setPromptText("Ticket Code (optional)");
-        TextField paymentMethodField = new TextField();
-        paymentMethodField.setPromptText("Payment Method (optional)");
-        Label errorLabel = new Label();
-        errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-
-        Button saveButton = new Button("Save");
-        saveButton.setStyle("-fx-font-size: 14px;");
-        saveButton.setOnAction(e -> {
-            try {
-                Participation p = new Participation();
-                p.setIdEvent(eventId);
-                p.setNomParticipant(nameField.getText());
-                p.setDateInscription(dateField.getValue());
-                p.setEvenementNom(eventNameField.getText().isEmpty() ? null : eventNameField.getText());
-                p.setTelephoneNumber(phoneField.getText().isEmpty() ? null : Integer.parseInt(phoneField.getText()));
-                p.setTicketCode(ticketCodeField.getText().isEmpty() ? null : ticketCodeField.getText());
-                p.setPaimentMethod(paymentMethodField.getText().isEmpty() ? null : paymentMethodField.getText());
-                participationService.createParticipation(p);
-                refreshList(eventId);
-            } catch (IllegalArgumentException ex) {
-                errorLabel.setText(ex.getMessage());
-            }
-        });
-
-        Label addLabel = new Label("Add Participation");
-        addLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-        form.getChildren().addAll(
-                addLabel,
-                nameField, dateField, eventNameField, phoneField, ticketCodeField, paymentMethodField,
-                errorLabel, saveButton
-        );
-        stage.setScene(new Scene(form, 400, 500));
-    }
-
-    private void showEditParticipationForm(Integer id) {
-        Optional<Participation> participationOpt = participationService.getParticipationById(id);
-        if (participationOpt.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Participation not found");
-            alert.showAndWait();
-            return;
-        }
-
-        Participation p = participationOpt.get();
-        VBox form = new VBox(10);
-        form.setPadding(new Insets(20));
-        form.setAlignment(Pos.CENTER);
-
-        TextField nameField = new TextField(p.getNomParticipant());
-        nameField.setPromptText("Participant Name (2-255 characters)");
-        DatePicker dateField = new DatePicker(p.getDateInscription());
-        dateField.setPromptText("Registration Date (optional)");
-        TextField eventNameField = new TextField(p.getEvenementNom());
-        eventNameField.setPromptText("Event Name (optional)");
-        TextField phoneField = new TextField(p.getTelephoneNumber() != null ? p.getTelephoneNumber().toString() : "");
-        phoneField.setPromptText("Phone Number (optional)");
-        TextField ticketCodeField = new TextField(p.getTicketCode());
-        ticketCodeField.setPromptText("Ticket Code (optional)");
-        TextField paymentMethodField = new TextField(p.getPaimentMethod());
-        paymentMethodField.setPromptText("Payment Method (optional)");
-        Label errorLabel = new Label();
-        errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-
-        Button saveButton = new Button("Update");
-        saveButton.setStyle("-fx-font-size: 14px;");
-        saveButton.setOnAction(e -> {
-            try {
-                p.setNomParticipant(nameField.getText());
-                p.setDateInscription(dateField.getValue());
-                p.setEvenementNom(eventNameField.getText().isEmpty() ? null : eventNameField.getText());
-                p.setTelephoneNumber(phoneField.getText().isEmpty() ? null : Integer.parseInt(phoneField.getText()));
-                p.setTicketCode(ticketCodeField.getText().isEmpty() ? null : ticketCodeField.getText());
-                p.setPaimentMethod(paymentMethodField.getText().isEmpty() ? null : paymentMethodField.getText());
-                participationService.updateParticipation(id, p);
-                refreshList(p.getIdEvent());
-            } catch (IllegalArgumentException ex) {
-                errorLabel.setText(ex.getMessage());
-            }
-        });
-
-        Label editLabel = new Label("Edit Participation");
-        editLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-        form.getChildren().addAll(
-                editLabel,
-                nameField, dateField, eventNameField, phoneField, ticketCodeField, paymentMethodField,
-                errorLabel, saveButton
-        );
-        stage.setScene(new Scene(form, 400, 500));
+    public ParticipationController(EventService eventService, ParticipationService participationService) {
+        this.eventService = eventService;
+        this.participationService = participationService;
     }
 
     public void setStage(Stage stage) {
@@ -183,7 +85,298 @@ public class ParticipationController {
         this.backToEventView = backToEventView;
     }
 
-    private void refreshList(Integer eventId) {
-        stage.setScene(new Scene(getParticipationListView(eventId), 400, 500));
+    public BorderPane getParticipationListView(Integer eventId) throws IOException {
+        currentEventId = eventId;
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ParticipationListView.fxml"));
+        loader.setController(this);
+        BorderPane pane = loader.load();
+        pane.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+        initializeParticipationList();
+        initializeSortChoiceBox();
+        populateParticipationList();
+        return pane;
+    }
+
+    private void initializeParticipationList() {
+        List<Participation> allParticipations = participationService.getParticipationsByEventId(currentEventId);
+        ObservableList<Participation> observableParticipations = FXCollections.observableArrayList(allParticipations);
+        filteredParticipations = new FilteredList<>(observableParticipations, p -> true);
+        sortedParticipations = new SortedList<>(filteredParticipations);
+        sortedParticipations.setComparator(Comparator.comparing(Participation::getNomParticipant, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    private void initializeSortChoiceBox() {
+        sortChoiceBox.setItems(sortOptions);
+        sortChoiceBox.setValue("Sort by Name");
+    }
+
+    @FXML
+    private void sortParticipations() {
+        String selectedSort = sortChoiceBox.getValue();
+        switch (selectedSort) {
+            case "Sort by Name":
+                sortedParticipations.setComparator(Comparator.comparing(Participation::getNomParticipant, String.CASE_INSENSITIVE_ORDER));
+                break;
+            case "Sort by Date":
+                sortedParticipations.setComparator(Comparator.comparing(Participation::getDateInscription, Comparator.nullsLast(Comparator.naturalOrder())));
+                break;
+            case "Sort by ID":
+                sortedParticipations.setComparator(Comparator.comparing(Participation::getParticipantId));
+                break;
+        }
+        populateParticipationList();
+    }
+
+    @FXML
+    private void filterParticipations() {
+        String searchText = searchField.getText().toLowerCase().trim();
+        filteredParticipations.setPredicate(participation -> {
+            if (searchText.isEmpty()) {
+                return true;
+            }
+            return participation.getNomParticipant().toLowerCase().contains(searchText) ||
+                   (participation.getTicketCode() != null && participation.getTicketCode().toLowerCase().contains(searchText));
+        });
+        populateParticipationList();
+    }
+
+    private void populateParticipationList() {
+        participationsBox.getChildren().clear();
+        if (sortedParticipations.isEmpty()) {
+            Label noParticipationsLabel = new Label("No participants found. Add one!");
+            noParticipationsLabel.getStyleClass().add("no-events");
+            participationsBox.getChildren().add(noParticipationsLabel);
+        } else {
+            for (Participation p : sortedParticipations) {
+                HBox participationBox = new HBox(15);
+                participationBox.getStyleClass().add("participation-item");
+                participationBox.setAlignment(Pos.CENTER_LEFT);
+
+                Label nameLabel = new Label(p.getNomParticipant());
+                nameLabel.getStyleClass().add("participation-title");
+
+                Button viewButton = new Button("View");
+                viewButton.getStyleClass().add("primary-button");
+                viewButton.setOnAction(e -> {
+                    try {
+                        showParticipationView(p.getParticipantId());
+                    } catch (IOException ex) {
+                        showError("Failed to load participation view");
+                    }
+                });
+
+                Button editButton = new Button("Edit");
+                editButton.getStyleClass().add("primary-button");
+                editButton.setOnAction(e -> {
+                    try {
+                        showEditParticipationForm(p.getParticipantId());
+                    } catch (IOException ex) {
+                        showError("Failed to load edit form");
+                    }
+                });
+
+                Button deleteButton = new Button("Delete");
+                deleteButton.getStyleClass().add("delete-button");
+                deleteButton.setOnAction(e -> {
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + p.getNomParticipant() + "?", ButtonType.YES, ButtonType.NO);
+                    confirm.getDialogPane().getStyleClass().add("alert");
+                    confirm.showAndWait().ifPresent(type -> {
+                        if (type == ButtonType.YES) {
+                            participationService.deleteParticipation(p.getParticipantId());
+                            initializeParticipationList();
+                            populateParticipationList();
+                        }
+                    });
+                });
+
+                participationBox.getChildren().addAll(nameLabel, viewButton, editButton, deleteButton);
+                participationsBox.getChildren().add(participationBox);
+            }
+        }
+    }
+
+    @FXML
+    private void handleCreateParticipation() throws IOException {
+        Optional<Event> eventOpt = eventService.getEventById(currentEventId);
+        String eventName = eventOpt.isPresent() ? eventOpt.get().getTitre() : "Unknown Event";
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CreateParticipationForm.fxml"));
+        loader.setController(this);
+        Scene scene = new Scene(loader.load(), 400, 500);
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+        eventNameField.setText(eventName);
+        ticketCodeField.setText(generateRandomTicketCode());
+        stage.setScene(scene);
+    }
+
+    @FXML
+    private void handleSaveParticipation() {
+        try {
+            String name = nameField.getText();
+            if (name.length() < 2 || name.length() > 255) {
+                throw new IllegalArgumentException("Name must be 2-255 characters");
+            }
+            String phone = phoneField.getText();
+            if (!phone.isEmpty() && (phone.length() < 7 || phone.length() > 11 || !phone.matches("\\d+"))) {
+                throw new IllegalArgumentException("Phone must be 7-11 digits");
+            }
+            String paymentMethod = paymentMethodField.getText();
+            if (!paymentMethod.isEmpty() && !paymentMethod.matches("Credit|Debit|Cash|Online")) {
+                throw new IllegalArgumentException("Payment method must be Credit, Debit, Cash, or Online");
+            }
+
+            Participation p = new Participation();
+            p.setIdEvent(currentEventId);
+            p.setNomParticipant(name);
+            p.setDateInscription(dateField.getValue());
+            p.setEvenementNom(eventNameField.getText());
+            p.setTelephoneNumber(phone.isEmpty() ? null : Integer.parseInt(phone));
+            p.setTicketCode(ticketCodeField.getText());
+            p.setPaimentMethod(paymentMethod.isEmpty() ? null : paymentMethod);
+            participationService.createParticipation(p);
+            showParticipationListView();
+        } catch (IllegalArgumentException ex) {
+            errorLabel.setText(ex.getMessage());
+        } catch (IOException ex) {
+            showError("Failed to return to participation list");
+        }
+    }
+
+    private void showEditParticipationForm(Integer id) throws IOException {
+        Optional<Participation> participationOpt = participationService.getParticipationById(id);
+        if (participationOpt.isEmpty()) {
+            showError("Participation not found");
+            return;
+        }
+
+        currentParticipationId = id;
+        Participation p = participationOpt.get();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EditParticipationForm.fxml"));
+        loader.setController(this);
+        Scene scene = new Scene(loader.load(), 400, 500);
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+        nameField.setText(p.getNomParticipant());
+        dateField.setValue(p.getDateInscription());
+        eventNameField.setText(p.getEvenementNom());
+        phoneField.setText(p.getTelephoneNumber() != null ? p.getTelephoneNumber().toString() : "");
+        ticketCodeField.setText(p.getTicketCode());
+        paymentMethodField.setText(p.getPaimentMethod());
+        stage.setScene(scene);
+    }
+
+    @FXML
+    private void handleUpdateParticipation() {
+        try {
+            Optional<Participation> participationOpt = participationService.getParticipationById(currentParticipationId);
+            if (participationOpt.isEmpty()) {
+                showError("Participation not found");
+                return;
+            }
+            Participation p = participationOpt.get();
+            String name = nameField.getText();
+            if (name.length() < 2 || name.length() > 255) {
+                throw new IllegalArgumentException("Name must be 2-255 characters");
+            }
+            String phone = phoneField.getText();
+            if (!phone.isEmpty() && (phone.length() < 7 || phone.length() > 11 || !phone.matches("\\d+"))) {
+                throw new IllegalArgumentException("Phone must be 7-11 digits");
+            }
+            String paymentMethod = paymentMethodField.getText();
+            if (!paymentMethod.isEmpty() && !paymentMethod.matches("Credit|Debit|Cash|Online")) {
+                throw new IllegalArgumentException("Payment method must be Credit, Debit, Cash, or Online");
+            }
+
+            p.setNomParticipant(name);
+            p.setDateInscription(dateField.getValue());
+            p.setEvenementNom(eventNameField.getText());
+            p.setTelephoneNumber(phone.isEmpty() ? null : Integer.parseInt(phone));
+            p.setTicketCode(ticketCodeField.getText());
+            p.setPaimentMethod(paymentMethod.isEmpty() ? null : paymentMethod);
+            participationService.updateParticipation(p.getParticipantId(), p);
+            showParticipationListView();
+        } catch (IllegalArgumentException ex) {
+            errorLabel.setText(ex.getMessage());
+        } catch (IOException ex) {
+            showError("Failed to return to participation list");
+        }
+    }
+
+    private void showParticipationView(Integer id) throws IOException {
+        Optional<Participation> participationOpt = participationService.getParticipationById(id);
+        if (participationOpt.isEmpty()) {
+            showError("Participation not found");
+            return;
+        }
+
+        Participation p = participationOpt.get();
+        currentParticipationId = id; // Store for export
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ParticipationView.fxml"));
+        loader.setController(this);
+        Scene scene = new Scene(loader.load(), 400, 500);
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+        nameLabelView.setText("Participant: " + p.getNomParticipant());
+        dateText.setText("Date: " + (p.getDateInscription() != null ? p.getDateInscription().toString() : "None"));
+        eventNameText.setText("Event: " + (p.getEvenementNom() != null ? p.getEvenementNom() : "None"));
+        phoneText.setText("Phone: " + (p.getTelephoneNumber() != null ? p.getTelephoneNumber().toString() : "None"));
+        ticketCodeText.setText("Ticket Code: " + (p.getTicketCode() != null ? p.getTicketCode() : "None"));
+        paymentMethodText.setText("Payment Method: " + (p.getPaimentMethod() != null ? p.getPaimentMethod() : "None"));
+        stage.setScene(scene);
+    }
+
+    @FXML
+    private void handleExportTicket() {
+        Optional<Participation> participationOpt = participationService.getParticipationById(currentParticipationId);
+        if (participationOpt.isEmpty()) {
+            showError("Participation not found");
+            return;
+        }
+        Participation participation = participationOpt.get();
+        Optional<Event> eventOpt = eventService.getEventById(participation.getIdEvent());
+        if (eventOpt.isEmpty()) {
+            showError("Event not found");
+            return;
+        }
+        Event event = eventOpt.get();
+        try {
+            String filePath = TicketPDFGenerator.generateTicketPDF(participation, event);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Ticket exported to " + filePath, ButtonType.OK);
+            alert.getDialogPane().getStyleClass().add("alert");
+            alert.showAndWait();
+        } catch (Exception e) {
+            showError("Failed to export ticket: " + e.getMessage());
+        }
+    }
+
+    private void showParticipationListView() throws IOException {
+        Scene scene = new Scene(getParticipationListView(currentEventId), 400, 500);
+        stage.setScene(scene);
+    }
+
+    @FXML
+    private void handleCancel() throws IOException {
+        showParticipationListView();
+    }
+
+    @FXML
+    private void handleBackToEvent() {
+        if (backToEventView != null) {
+            backToEventView.run();
+        }
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, message);
+        alert.getDialogPane().getStyleClass().add("alert");
+        alert.showAndWait();
+    }
+
+    private String generateRandomTicketCode() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuilder code = new StringBuilder(8);
+        for (int i = 0; i < 8; i++) {
+            code.append(characters.charAt(random.nextInt(characters.length())));
+        }
+        return code.toString();
     }
 }

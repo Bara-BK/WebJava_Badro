@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <VBox alignment="CENTER" spacing="10">
+            <ImageView fx:id="logoView" fitWidth="150" fitHeight="50" preserveRatio="true" styleClass="logo">
+                <image>
+                    <Image url="/images/logo.png"/>
+                </image>
+            </ImageView>
+            <Label fx:id="titleLabel" text="Events" styleClass="title"/>
+            <HBox spacing="10" alignment="CENTER">
+                <TextField fx:id="searchField" promptText="Search by title..." styleClass="search-field" onKeyReleased="#filterEvents"/>
+                <ChoiceBox fx:id="sortChoiceBox" styleClass="choice-box" onAction="#sortEvents"/>
+                <Button fx:id="createButton" text="Create New Event" styleClass="primary-button" onAction="#handleCreateEvent"/>
+                <Button fx:id="statisticsButton" text="View Statistics" styleClass="primary-button" onAction="#showStatisticsView"/>
+                <Button fx:id="calendarButton" text="Event Calendar" styleClass="primary-button" onAction="#showCalendarView"/>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox fx:id="eventsBox" alignment="TOP_CENTER" spacing="10" styleClass="event-list"/>
+        </ScrollPane>
+    </center>
+</BorderPane>

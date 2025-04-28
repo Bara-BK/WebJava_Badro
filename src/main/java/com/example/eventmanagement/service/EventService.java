@@ -10,7 +10,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class EventService {
     public List<Event> getAllEvents() {
@@ -31,7 +33,7 @@ public class EventService {
     }
 
     public Optional<Event> getEventById(Integer id) {
-        String sql = "SELECT * FROM evenement WHERE id = ?";
+        String sql = "SELECT * FROM evenement WHERE event_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -71,7 +73,7 @@ public class EventService {
     }
 
     public void updateEvent(Integer id, Event event) {
-        String sql = "UPDATE evenement SET titre = ?, description = ?, date = ?, heure = ?, lieu = ?, type = ?, organisateur_nom = ?, nombre_max_participants = ?, status = ?, ticket_prix = ?, periode_inscription_fin = ? WHERE id = ?";
+        String sql = "UPDATE evenement SET titre = ?, description = ?, date = ?, heure = ?, lieu = ?, type = ?, organisateur_nom = ?, nombre_max_participants = ?, status = ?, ticket_prix = ?, periode_inscription_fin = ? WHERE event_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, event.getTitre());
@@ -108,7 +110,7 @@ public class EventService {
         }
 
         // Then, delete the event
-        String deleteEventSql = "DELETE FROM evenement WHERE id = ?";
+        String deleteEventSql = "DELETE FROM evenement WHERE event_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(deleteEventSql)) {
             stmt.setInt(1, id);
@@ -120,9 +122,18 @@ public class EventService {
         }
     }
 
+    public Map<String, Long> getEventTypeDistribution() {
+        List<Event> events = getAllEvents();
+        return events.stream()
+                .collect(Collectors.groupingBy(
+                        event -> event.getType() != null ? event.getType() : "None",
+                        Collectors.counting()
+                ));
+    }
+
     private Event mapToEvent(ResultSet rs) throws SQLException {
         Event event = new Event();
-        event.setId(rs.getInt("id"));
+        event.setEventId(rs.getInt("event_id"));
         event.setTitre(rs.getString("titre"));
         event.setDescription(rs.getString("description"));
         event.setDate(rs.getObject("date", LocalDate.class));

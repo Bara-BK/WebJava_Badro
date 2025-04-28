@@ -1,0 +1,10 @@
+com\example\eventmanagement\service\ParticipationService.class
+com\example\eventmanagement\controller\EventController.class
+com\example\eventmanagement\controller\EventCalendarController.class
+com\example\eventmanagement\service\DatabaseConnection.class
+com\example\eventmanagement\entity\Participation.class
+com\example\eventmanagement\Main.class
+com\example\eventmanagement\controller\ParticipationController.class
+com\example\eventmanagement\service\EventService.class
+com\example\eventmanagement\util\TicketPDFGenerator.class
+com\example\eventmanagement\entity\Event.class

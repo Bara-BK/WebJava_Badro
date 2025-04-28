@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 public class Event {
-    private Integer id;
+    private Integer eventId;
     private String titre;
     private String description;
     private LocalDate date;
@@ -28,7 +28,7 @@ public class Event {
             throw new IllegalArgumentException("Title cannot be blank");
         }
         if (titre.length() < 5 || titre.length() > 255) {
-            throw new IllegalArgumentException("Title must be between 5 and 255 characters");
+            throw new IllegalArgumentException("Title must be between 5 and 20 characters");
         }
         this.titre = titre;
     }
@@ -52,19 +52,24 @@ public class Event {
     }
 
     public void setLieu(String lieu) {
+        if (lieu != null && !lieu.trim().isEmpty()) {
+            if (lieu.length() < 3 || lieu.length() > 255) {
+                throw new IllegalArgumentException("Location must be between 3 and 50 characters if provided");
+            }
+        }
         this.lieu = lieu; // Optional
     }
 
     public void setType(String type) {
         if (type != null && type.length() > 255) {
-            throw new IllegalArgumentException("Type must be 255 characters or less");
+            throw new IllegalArgumentException("Type must be 10 characters or less");
         }
         this.type = type; // Optional
     }
 
     public void setOrganisateurNom(String organisateurNom) {
         if (organisateurNom != null && organisateurNom.length() > 255) {
-            throw new IllegalArgumentException("Organizer name must be 255 characters or less");
+            throw new IllegalArgumentException("Organizer name must be 20 characters or less");
         }
         this.organisateurNom = organisateurNom; // Optional
     }
@@ -84,8 +89,15 @@ public class Event {
     }
 
     public void setTicketPrix(String ticketPrix) {
-        if (ticketPrix != null && ticketPrix.length() > 255) {
-            throw new IllegalArgumentException("Ticket price must be 255 characters or less");
+        if (ticketPrix != null && !ticketPrix.trim().isEmpty()) {
+            try {
+                double price = Double.parseDouble(ticketPrix);
+                if (price < 0) {
+                    throw new IllegalArgumentException("Ticket price cannot be negative");
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Ticket price must be a valid number");
+            }
         }
         this.ticketPrix = ticketPrix; // Optional
     }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="form" alignment="CENTER" spacing="10" styleClass="form" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <Label text="Edit Event" styleClass="form-title"/>
+    <TextField fx:id="titleField" promptText="Title" styleClass="text-field"/>
+    <TextArea fx:id="descField" promptText="Description" styleClass="text-area"/>
+    <DatePicker fx:id="dateField" promptText="Date" styleClass="date-picker"/>
+    <TextField fx:id="timeField" promptText="Time (HH:mm)" styleClass="text-field"/>
+    <TextField fx:id="locationField" promptText="Location" styleClass="text-field"/>
+    <ChoiceBox fx:id="typeField" styleClass="choice-box"/>
+    <TextField fx:id="organizerField" promptText="Organizer" styleClass="text-field"/>
+    <TextField fx:id="maxParticipantsField" promptText="Max Participants" styleClass="text-field"/>
+    <TextField fx:id="statusField" promptText="Status" styleClass="text-field"/>
+    <TextField fx:id="ticketPriceField" promptText="Ticket Price" styleClass="text-field"/>
+    <TextField fx:id="registrationEndField" promptText="Registration End" styleClass="text-field"/>
+    <Label fx:id="errorLabel" styleClass="error-label"/>
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="saveButton" text="Update" styleClass="primary-button" onAction="#handleUpdateEvent"/>
+        <Button fx:id="cancelButton" text="Cancel" styleClass="secondary-button" onAction="#handleCancel"/>
+    </HBox>
+</VBox>

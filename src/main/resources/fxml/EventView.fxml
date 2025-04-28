@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox fx:id="view" alignment="CENTER" spacing="10" styleClass="view" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <Label fx:id="titleLabelView" styleClass="view-title"/>
+    <Text fx:id="typeText" styleClass="view-text"/>
+    <Text fx:id="descText" styleClass="view-text"/>
+    <Text fx:id="dateText" styleClass="view-text"/>
+    <Text fx:id="timeText" styleClass="view-text"/>
+    <Text fx:id="locationText" styleClass="view-text"/>
+    <Text fx:id="organizerText" styleClass="view-text"/>
+    <Text fx:id="maxParticipantsText" styleClass="view-text"/>
+    <Text fx:id="statusText" styleClass="view-text"/>
+    <Text fx:id="ticketPriceText" styleClass="view-text"/>
+    <Text fx:id="registrationEndText" styleClass="view-text"/>
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="participationButton" text="Manage Participations" styleClass="primary-button" onAction="#handleManageParticipations"/>
+        <Button fx:id="backButton" text="Back to List" styleClass="secondary-button" onAction="#handleCancel"/>
+    </HBox>
+</VBox>
