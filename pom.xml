@@ -17,6 +17,7 @@
         <zxing.version>3.5.3</zxing.version>
         <lombok.version>1.18.30</lombok.version>
         <mysql.version>8.3.0</mysql.version>
+        <twilio.version>10.0.0</twilio.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -74,6 +75,11 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.twilio.sdk</groupId>
+                <artifactId>twilio</artifactId>
+                <version>${twilio.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -88,14 +94,12 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-            <classifier>win</classifier>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>${javafx.version}</version>
-            <classifier>win</classifier>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Lombok -->
@@ -131,6 +135,12 @@
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
+        </dependency>
+
+        <!-- Twilio for SMS -->
+        <dependency>
+            <groupId>com.twilio.sdk</groupId>
+            <artifactId>twilio</artifactId>
         </dependency>
     </dependencies>
 
@@ -177,6 +187,9 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.example.eventmanagement.Main</mainClass>
+                    <jvmArgs>
+                        <arg>-Djava.awt.headless=false</arg>
+                    </jvmArgs>
                 </configuration>
             </plugin>
             <plugin>

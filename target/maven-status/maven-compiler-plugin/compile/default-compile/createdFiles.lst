@@ -5,6 +5,7 @@ com\example\eventmanagement\service\DatabaseConnection.class
 com\example\eventmanagement\entity\Participation.class
 com\example\eventmanagement\Main.class
 com\example\eventmanagement\controller\ParticipationController.class
+com\example\eventmanagement\util\SmsNotificationUtil.class
 com\example\eventmanagement\service\EventService.class
 com\example\eventmanagement\util\TicketPDFGenerator.class
 com\example\eventmanagement\entity\Event.class

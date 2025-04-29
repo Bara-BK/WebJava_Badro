@@ -77,6 +77,14 @@
     -fx-cursor: hand;
 }
 
+.button.social {
+    -fx-background-color: #800080;
+}
+
+.button.social:hover {
+    -fx-background-color: #9932CC;
+}
+
 .text-field, .combo-box, .date-picker, .choice-box {
     -fx-background-color: #FFFFFF;
     -fx-border-color: #D3D3D3;
@@ -99,4 +107,16 @@
 .alert .button {
     -fx-background-color: #4682B4;
     -fx-text-fill: #FFFFFF;
+}
+
+.facebook {
+    -fx-background-color: #3b5998;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.instagram {
+    -fx-background-color: #e1306c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }

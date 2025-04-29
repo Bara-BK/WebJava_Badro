@@ -5,6 +5,7 @@ import com.example.eventmanagement.entity.Participation;
 import com.example.eventmanagement.service.EventService;
 import com.example.eventmanagement.service.ParticipationService;
 import com.example.eventmanagement.util.TicketPDFGenerator;
+import com.example.eventmanagement.util.SmsNotificationUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -26,6 +27,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.UnaryOperator;
 
 public class ParticipationController {
     private final EventService eventService;
@@ -204,6 +206,17 @@ public class ParticipationController {
         loader.setController(this);
         Scene scene = new Scene(loader.load(), 400, 500);
         scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+
+        // Set up TextFormatter for phoneField
+        UnaryOperator<TextFormatter.Change> phoneFilter = change -> {
+            String newText = change.getControlNewText();
+            if (newText.isEmpty()) return change;
+            if (newText.length() > 8) return null;
+            if (!newText.matches("\\d{0,8}")) return null;
+            return change;
+        };
+        phoneField.setTextFormatter(new TextFormatter<>(phoneFilter));
+
         eventNameField.setText(eventName);
         ticketCodeField.setText(generateRandomTicketCode());
         stage.setScene(scene);
@@ -216,9 +229,14 @@ public class ParticipationController {
             if (name.length() < 2 || name.length() > 255) {
                 throw new IllegalArgumentException("Name must be 2-255 characters");
             }
-            String phone = phoneField.getText();
-            if (!phone.isEmpty() && (phone.length() < 7 || phone.length() > 11 || !phone.matches("\\d+"))) {
-                throw new IllegalArgumentException("Phone must be 7-11 digits");
+            String phoneInput = phoneField.getText();
+            String phone = null;
+            // Validate 8-digit raw number
+            if (!phoneInput.isEmpty()) {
+                if (!phoneInput.matches("\\d{8}")) {
+                    throw new IllegalArgumentException("Phone number must be exactly 8 digits (e.g., 12345678)");
+                }
+                phone = phoneInput;
             }
             String paymentMethod = paymentMethodField.getText();
             if (!paymentMethod.isEmpty() && !paymentMethod.matches("Credit|Debit|Cash|Online")) {
@@ -230,10 +248,28 @@ public class ParticipationController {
             p.setNomParticipant(name);
             p.setDateInscription(dateField.getValue());
             p.setEvenementNom(eventNameField.getText());
-            p.setTelephoneNumber(phone.isEmpty() ? null : Integer.parseInt(phone));
+            p.setTelephoneNumber(phone == null ? null : Integer.parseInt(phone));
             p.setTicketCode(ticketCodeField.getText());
             p.setPaimentMethod(paymentMethod.isEmpty() ? null : paymentMethod);
             participationService.createParticipation(p);
+
+            // Send SMS notification if phone number is provided
+            if (phone != null) {
+                try {
+                    SmsNotificationUtil.sendConfirmationSms(
+                        p.getNomParticipant(),
+                        p.getEvenementNom(),
+                        p.getTicketCode(),
+                        "+216" + phone
+                    );
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Participant added and SMS sent successfully.");
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.WARNING, "Warning", "Participant added, but SMS failed: " + e.getMessage());
+                }
+            } else {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Participant added successfully (no phone number provided).");
+            }
+
             showParticipationListView();
         } catch (IllegalArgumentException ex) {
             errorLabel.setText(ex.getMessage());
@@ -255,6 +291,17 @@ public class ParticipationController {
         loader.setController(this);
         Scene scene = new Scene(loader.load(), 400, 500);
         scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+
+        // Set up TextFormatter for phoneField
+        UnaryOperator<TextFormatter.Change> phoneFilter = change -> {
+            String newText = change.getControlNewText();
+            if (newText.isEmpty()) return change;
+            if (newText.length() > 8) return null;
+            if (!newText.matches("\\d{0,8}")) return null;
+            return change;
+        };
+        phoneField.setTextFormatter(new TextFormatter<>(phoneFilter));
+
         nameField.setText(p.getNomParticipant());
         dateField.setValue(p.getDateInscription());
         eventNameField.setText(p.getEvenementNom());
@@ -277,9 +324,14 @@ public class ParticipationController {
             if (name.length() < 2 || name.length() > 255) {
                 throw new IllegalArgumentException("Name must be 2-255 characters");
             }
-            String phone = phoneField.getText();
-            if (!phone.isEmpty() && (phone.length() < 7 || phone.length() > 11 || !phone.matches("\\d+"))) {
-                throw new IllegalArgumentException("Phone must be 7-11 digits");
+            String phoneInput = phoneField.getText();
+            String phone = null;
+            // Validate 8-digit raw number
+            if (!phoneInput.isEmpty()) {
+                if (!phoneInput.matches("\\d{8}")) {
+                    throw new IllegalArgumentException("Phone number must be exactly 8 digits (e.g., 12345678)");
+                }
+                phone = phoneInput;
             }
             String paymentMethod = paymentMethodField.getText();
             if (!paymentMethod.isEmpty() && !paymentMethod.matches("Credit|Debit|Cash|Online")) {
@@ -289,10 +341,28 @@ public class ParticipationController {
             p.setNomParticipant(name);
             p.setDateInscription(dateField.getValue());
             p.setEvenementNom(eventNameField.getText());
-            p.setTelephoneNumber(phone.isEmpty() ? null : Integer.parseInt(phone));
+            p.setTelephoneNumber(phone == null ? null : Integer.parseInt(phone));
             p.setTicketCode(ticketCodeField.getText());
             p.setPaimentMethod(paymentMethod.isEmpty() ? null : paymentMethod);
             participationService.updateParticipation(p.getParticipantId(), p);
+
+            // Send SMS notification if phone number is provided
+            if (phone != null) {
+                try {
+                    SmsNotificationUtil.sendConfirmationSms(
+                        p.getNomParticipant(),
+                        p.getEvenementNom(),
+                        p.getTicketCode(),
+                        "+216" + phone
+                    );
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Participant updated and SMS sent successfully.");
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.WARNING, "Warning", "Participant updated, but SMS failed: " + e.getMessage());
+                }
+            } else {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Participant updated successfully (no phone number provided).");
+            }
+
             showParticipationListView();
         } catch (IllegalArgumentException ex) {
             errorLabel.setText(ex.getMessage());
@@ -309,7 +379,7 @@ public class ParticipationController {
         }
 
         Participation p = participationOpt.get();
-        currentParticipationId = id; // Store for export
+        currentParticipationId = id;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ParticipationView.fxml"));
         loader.setController(this);
         Scene scene = new Scene(loader.load(), 400, 500);
@@ -366,6 +436,15 @@ public class ParticipationController {
 
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR, message);
+        alert.getDialogPane().getStyleClass().add("alert");
+        alert.showAndWait();
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
         alert.getDialogPane().getStyleClass().add("alert");
         alert.showAndWait();
     }

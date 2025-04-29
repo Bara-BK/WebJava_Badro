@@ -51,14 +51,12 @@ public class Participation {
     public void setTelephoneNumber(Integer telephoneNumber) {
         if (telephoneNumber != null) {
             String phoneStr = telephoneNumber.toString();
-            if (phoneStr.length() < 7) {
-                throw new IllegalArgumentException("Telephone number must be at least 7 digits");
-            }
-            if (phoneStr.length() > 11) {
-                throw new IllegalArgumentException("Telephone number must be 11 digits or less");
+            // Allow 7-15 digits (Twilio's max is 15 digits after +)
+            if (phoneStr.length() < 7 || phoneStr.length() > 15) {
+                throw new IllegalArgumentException("Phone number must be 7-15 digits (without + prefix)");
             }
         }
-        this.telephoneNumber = telephoneNumber; // Optional
+        this.telephoneNumber = telephoneNumber;
     }
 
     public void setTicketCode(String ticketCode) {
