@@ -223,18 +223,7 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
 }
 
-/* ========== BACKGROUND OPTIONS ========== */
-.primary-bg {
-    -fx-background-color: linear-gradient(135deg, #4361ee, #3a0ca3);
-}
 
-.secondary-bg {
-    -fx-background-color: linear-gradient(135deg, #4895ef, #4cc9f0);
-}
-
-.dark-bg {
-    -fx-background-color: linear-gradient(135deg, #1a1a2e, #16213e);
-}
 
 /* ========== TYPOGRAPHY ========== */
 .title {
