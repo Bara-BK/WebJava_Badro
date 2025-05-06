@@ -3,50 +3,57 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="root" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <HBox alignment="CENTER" spacing="10">
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+            fitToWidth="true" fitToHeight="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+            style="-fx-background-color: transparent; -fx-padding: 0;">
+    <content>
+        <VBox fx:id="root" styleClass="root">
             <children>
-                <ComboBox fx:id="viewComboBox" prefWidth="100"/>
-                <Button fx:id="todayButton" onAction="#handleToday" text="Today"/>
-                <Button fx:id="prevButton" onAction="#handlePrevious" text="&lt;"/>
-                <Button fx:id="nextButton" onAction="#handleNext" text="&gt;"/>
-                <TextField fx:id="filterField" onKeyReleased="#handleFilter" promptText="Filter by title or location..."/>
-                <Button fx:id="backButton" onAction="#handleBackToEvents" text="Back to Events"/>
-            </children>
-            <padding>
-                <Insets bottom="10" left="10" right="10" top="10"/>
-            </padding>
-        </HBox>
-        <GridPane fx:id="calendarGrid" hgap="5" vgap="5">
-            <padding>
-                <Insets bottom="10" left="10" right="10"/>
-            </padding>
-        </GridPane>
-        <VBox alignment="CENTER" spacing="10">
-            <children>
-                <TextField fx:id="titleField" prefWidth="200" promptText="Event Title"/>
-                <TextField fx:id="descField" prefWidth="200" promptText="Description"/>
-                <DatePicker fx:id="datePicker" prefWidth="200" promptText="Date"/>
-                <TextField fx:id="timeField" prefWidth="200" promptText="Time (HH:mm)"/>
-                <TextField fx:id="locationField" prefWidth="200" promptText="Location"/>
-                <ChoiceBox fx:id="typeField" prefWidth="200"/>
-                <TextField fx:id="organizerField" prefWidth="200" promptText="Organizer"/>
-                <TextField fx:id="maxParticipantsField" prefWidth="200" promptText="Max Participants"/>
-                <TextField fx:id="statusField" prefWidth="200" promptText="Status"/>
-                <TextField fx:id="ticketPriceField" prefWidth="200" promptText="Ticket Price"/>
-                <TextField fx:id="registrationEndField" prefWidth="200" promptText="Registration End"/>
                 <HBox alignment="CENTER" spacing="10">
                     <children>
-                        <Button fx:id="saveButton" onAction="#handleSaveEvent" text="Save"/>
-                        <Button fx:id="deleteButton" onAction="#handleDeleteEvent" text="Delete"/>
-                        <Button fx:id="clearButton" onAction="#handleClearForm" text="Clear"/>
+                        <ComboBox fx:id="viewComboBox" prefWidth="100"/>
+                        <Button fx:id="todayButton" onAction="#handleToday" text="Today"/>
+                        <Button fx:id="prevButton" onAction="#handlePrevious" text="&lt;"/>
+                        <Button fx:id="nextButton" onAction="#handleNext" text="&gt;"/>
+                        <TextField fx:id="filterField" onKeyReleased="#handleFilter" promptText="Filter by title or location..."/>
+                        <Button fx:id="backButton" onAction="#handleBackToEvents" text="Back to Events"/>
                     </children>
+                    <padding>
+                        <Insets bottom="10" left="10" right="10" top="10"/>
+                    </padding>
                 </HBox>
+                <GridPane fx:id="calendarGrid" hgap="5" vgap="5">
+                    <padding>
+                        <Insets bottom="10" left="10" right="10"/>
+                    </padding>
+                </GridPane>
+                <VBox alignment="CENTER" spacing="10">
+                    <children>
+                        <TextField fx:id="titleField" prefWidth="200" promptText="Event Title"/>
+                        <TextField fx:id="descField" prefWidth="200" promptText="Description"/>
+                        <DatePicker fx:id="datePicker" prefWidth="200" promptText="Date"/>
+                        <TextField fx:id="timeField" prefWidth="200" promptText="Time (HH:mm)"/>
+                        <TextField fx:id="locationField" prefWidth="200" promptText="Location"/>
+                        <ChoiceBox fx:id="typeField" prefWidth="200"/>
+                        <TextField fx:id="organizerField" prefWidth="200" promptText="Organizer"/>
+                        <TextField fx:id="maxParticipantsField" prefWidth="200" promptText="Max Participants"/>
+                        <TextField fx:id="statusField" prefWidth="200" promptText="Status"/>
+                        <TextField fx:id="ticketPriceField" prefWidth="200" promptText="Ticket Price"/>
+                        <TextField fx:id="registrationEndField" prefWidth="200" promptText="Registration End"/>
+                        <HBox alignment="CENTER" spacing="10">
+                            <children>
+                                <Button fx:id="saveButton" onAction="#handleSaveEvent" text="Save"/>
+                                <Button fx:id="deleteButton" onAction="#handleDeleteEvent" text="Delete"/>
+                                <Button fx:id="clearButton" onAction="#handleClearForm" text="Clear"/>
+                                <Button fx:id="shareFacebookButton" onAction="#handleShareToFacebook" text="Share to Facebook"/>
+                            </children>
+                        </HBox>
+                    </children>
+                    <padding>
+                        <Insets bottom="10" left="10" right="10"/>
+                    </padding>
+                </VBox>
             </children>
-            <padding>
-                <Insets bottom="10" left="10" right="10"/>
-            </padding>
         </VBox>
-    </children>
-</VBox>
+    </content>
+</ScrollPane>

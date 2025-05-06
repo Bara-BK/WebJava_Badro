@@ -84,13 +84,10 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- MySQL JDBC Driver -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
-
-        <!-- JavaFX -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -101,15 +98,11 @@
             <artifactId>javafx-fxml</artifactId>
             <scope>compile</scope>
         </dependency>
-
-        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <!-- iText 7 -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>kernel</artifactId>
@@ -126,8 +119,6 @@
             <groupId>com.itextpdf</groupId>
             <artifactId>forms</artifactId>
         </dependency>
-
-        <!-- ZXing for QR Code -->
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>
@@ -136,8 +127,6 @@
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
         </dependency>
-
-        <!-- Twilio for SMS -->
         <dependency>
             <groupId>com.twilio.sdk</groupId>
             <artifactId>twilio</artifactId>
@@ -187,9 +176,6 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.example.eventmanagement.Main</mainClass>
-                    <jvmArgs>
-                        <arg>-Djava.awt.headless=false</arg>
-                    </jvmArgs>
                 </configuration>
             </plugin>
             <plugin>

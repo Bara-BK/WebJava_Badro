@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.eventmanagement.controller.DashboardController">
+    <!-- Left Sidebar -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="200" alignment="TOP_CENTER" spacing="10">
+            <padding>
+                <Insets top="20" right="10" bottom="20" left="10"/>
+            </padding>
+            <ImageView fitWidth="150" fitHeight="50" preserveRatio="true" styleClass="logo">
+                <image>
+                    <Image url="/images/logo.png"/>
+                </image>
+            </ImageView>
+            <Label text="Dashboard" styleClass="sidebar-title"/>
+            <Button fx:id="eventsButton" text="Events" styleClass="sidebar-button selected" onAction="#showEventListView"/>
+            <!-- Placeholder for future teammate options -->
+            <Button text="Option 1" styleClass="sidebar-button" disable="true"/>
+            <Button text="Option 2" styleClass="sidebar-button" disable="true"/>
+        </VBox>
+    </left>
+    <!-- Main Content -->
+    <center>
+        <StackPane fx:id="contentPane" styleClass="dashboard-content"/>
+    </center>
+</BorderPane>

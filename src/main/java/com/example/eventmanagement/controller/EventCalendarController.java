@@ -5,7 +5,6 @@ import com.example.eventmanagement.service.EventService;
 import com.example.eventmanagement.service.ParticipationService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.ClipboardContent;
@@ -15,7 +14,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.awt.Desktop;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -35,7 +38,7 @@ public class EventCalendarController {
     @FXML private TextField titleField, descField, timeField, locationField, organizerField, maxParticipantsField, statusField, ticketPriceField, registrationEndField;
     @FXML private DatePicker datePicker;
     @FXML private ChoiceBox<String> typeField;
-    @FXML private Button saveButton, deleteButton, clearButton;
+    @FXML private Button saveButton, deleteButton, clearButton, shareFacebookButton;
 
     private LocalDate currentDate = LocalDate.now();
     private String currentView = "Month";
@@ -61,6 +64,7 @@ public class EventCalendarController {
         typeField.setItems(FXCollections.observableArrayList("", "Entertainment", "Cultural", "Educational", "Sports"));
         typeField.setValue("");
         deleteButton.setDisable(true);
+        shareFacebookButton.setDisable(true); // Disable until an event is selected
         renderCalendar();
     }
 
@@ -147,6 +151,50 @@ public class EventCalendarController {
         eventController.showEventListView();
     }
 
+    @FXML
+    private void handleShareToFacebook() {
+        if (selectedEvent == null) {
+            showAlert(Alert.AlertType.ERROR, "Error", "No event selected to share.");
+            return;
+        }
+
+        try {
+            // Construct the post message with event details
+            StringBuilder postMessage = new StringBuilder();
+            postMessage.append("Join us for ").append(selectedEvent.getTitre()).append("!\n");
+            if (selectedEvent.getDescription() != null && !selectedEvent.getDescription().isEmpty()) {
+                postMessage.append(selectedEvent.getDescription()).append("\n");
+            }
+            postMessage.append("📅 Date: ").append(selectedEvent.getDate());
+            if (selectedEvent.getHeure() != null) {
+                postMessage.append(" at ").append(selectedEvent.getHeure());
+            }
+            postMessage.append("\n📍 Location: ").append(selectedEvent.getLieu() != null ? selectedEvent.getLieu() : "TBA").append("\n");
+            if (selectedEvent.getTicketPrix() != null && !selectedEvent.getTicketPrix().isEmpty()) {
+                postMessage.append("🎟️ Ticket Price: ").append(selectedEvent.getTicketPrix());
+            }
+
+            // Encode the post message for URL
+            String encodedMessage = URLEncoder.encode(postMessage.toString(), StandardCharsets.UTF_8);
+
+            // Construct the Facebook sharing URL
+            String facebookShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
+                    URLEncoder.encode("https://EventBadro-site.com", StandardCharsets.UTF_8) +
+                    "&quote=" + encodedMessage;
+
+            // Open the URL in the default browser
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(new URI(facebookShareUrl));
+            } else {
+                // Fallback: Show the URL in an alert for manual copying
+                showAlert(Alert.AlertType.WARNING, "Browser Not Supported",
+                        "Unable to open browser. Please copy this URL and paste it in your browser:\n" + facebookShareUrl);
+            }
+        } catch (IOException | java.net.URISyntaxException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to share event to Facebook: " + e.getMessage());
+        }
+    }
+
     private void renderCalendar() {
         calendarGrid.getChildren().clear();
         List<Event> events = eventService.getAllEvents();
@@ -185,7 +233,7 @@ public class EventCalendarController {
             // Filter and add events
             for (Event event : events) {
                 if (event.getDate() != null && event.getDate().equals(date) &&
-                    (filter.isEmpty() || event.getTitre().toLowerCase().contains(filter) || (event.getLieu() != null && event.getLieu().toLowerCase().contains(filter)))) {
+                        (filter.isEmpty() || event.getTitre().toLowerCase().contains(filter) || (event.getLieu() != null && event.getLieu().toLowerCase().contains(filter)))) {
                     Label eventLabel = new Label(event.getTitre());
                     eventLabel.getStyleClass().add("event-label");
                     if (event.getType() != null && !event.getType().isEmpty()) {
@@ -240,7 +288,7 @@ public class EventCalendarController {
             dayBox.getStyleClass().add("calendar-day");
             for (Event event : events) {
                 if (event.getDate() != null && event.getDate().equals(date) &&
-                    (filter.isEmpty() || event.getTitre().toLowerCase().contains(filter) || (event.getLieu() != null && event.getLieu().toLowerCase().contains(filter)))) {
+                        (filter.isEmpty() || event.getTitre().toLowerCase().contains(filter) || (event.getLieu() != null && event.getLieu().toLowerCase().contains(filter)))) {
                     Label eventLabel = new Label(event.getTitre());
                     eventLabel.getStyleClass().add("event-label");
                     if (event.getType() != null && !event.getType().isEmpty()) {
@@ -269,6 +317,7 @@ public class EventCalendarController {
             ticketPriceField.setText(event.getTicketPrix());
             registrationEndField.setText(event.getPeriodeInscriptionFin());
             deleteButton.setDisable(false);
+            shareFacebookButton.setDisable(false); // Enable sharing when an event is selected
         });
 
         dayBox.setOnDragDetected(e -> {
@@ -294,6 +343,7 @@ public class EventCalendarController {
         registrationEndField.clear();
         selectedEvent = null;
         deleteButton.setDisable(true);
+        shareFacebookButton.setDisable(true); // Disable sharing when form is cleared
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
