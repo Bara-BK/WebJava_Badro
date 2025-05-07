@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.effect.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="tn.badro.Controllers.MainMenuController">
+    <!-- Blurred Background Image -->
+    <ImageView fitWidth="1200" fitHeight="800" preserveRatio="false">
+        <image>
+            <Image url="@../icones/main_bg.jpg" />
+        </image>
+        <effect>
+            <GaussianBlur radius="3.0" />
+        </effect>
+    </ImageView>
+
+    <!-- Main Content with Semi-Transparent Background -->
+    <BorderPane fx:id="mainMenuBorderPane" prefHeight="800.0" prefWidth="1200.0" stylesheets="@../styles/main.css">
+        <top>
+            <HBox alignment="CENTER_RIGHT" spacing="20" style="-fx-background-color: rgba(255,255,255,0.95); -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+                <padding>
+                    <Insets top="20" right="40" bottom="20" left="40"/>
+                </padding>
+                <Label text="BADRO" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4B9CD3;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <StackPane alignment="CENTER_RIGHT" visible="false" fx:id="notificationIconContainer">
+                    <ImageView fx:id="NotificationIcon" accessibleRole="LIST_VIEW" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#handleNotificationIconClick" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../icones/notification.gif" />
+                        </image>
+                        <cursor>
+                            <Cursor fx:constant="HAND" />
+                        </cursor>
+                    </ImageView>
+                    <Label fx:id="notificationBadge" text="" visible="false" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 10; -fx-padding: 2 6 2 6; -fx-border-radius: 10; -fx-border-width: 0;" StackPane.alignment="TOP_RIGHT" />
+                </StackPane>
+                <HBox fx:id="userInfoSection" alignment="CENTER_RIGHT" spacing="10">
+                    <Label fx:id="userDisplayName" style="-fx-text-fill: #4B9CD3; -fx-font-size: 14px;"/>
+                    <Button fx:id="profileButton" text="Profile" onAction="#showProfile" visible="false"
+                            style="-fx-background-color: transparent; -fx-border-color: #4B9CD3; -fx-text-fill: #4B9CD3; -fx-font-size: 14px; -fx-padding: 5 15; -fx-background-radius: 5; -fx-border-radius: 5; -fx-cursor: hand;"/>
+                    <Button fx:id="loginButton" text="Login" onAction="#showLogin" visible="true"
+                            style="-fx-background-color: #4B9CD3; -fx-text-fill: white;"/>
+                    <Button fx:id="registerButton" text="Register" onAction="#showRegister" visible="true"
+                            style="-fx-background-color: transparent; -fx-border-color: #4B9CD3; -fx-text-fill: #4B9CD3;"/>
+                    <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout" visible="false"
+                            style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                </HBox>
+            </HBox>
+        </top>
+        
+        <center>
+            <VBox alignment="CENTER" spacing="30" style="-fx-background-color: rgba(248,251,253,0.8);">
+                <padding>
+                    <Insets top="50" right="50" bottom="50" left="50"/>
+                </padding>
+                
+                <VBox alignment="CENTER" spacing="15" style="-fx-padding: 0 0 40 0;">
+                    <Label text="Welcome to BADRO" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #4B9CD3;"/>
+                    <Label text="Your Ultimate Exchange Program Management Platform" style="-fx-font-size: 18px; -fx-text-fill: #6C757D;"/>
+                </VBox>
+                
+                <HBox spacing="30" alignment="CENTER">
+                    <VBox styleClass="feature-card" style="-fx-background-color: rgba(255,255,255,0.9); -fx-padding: 30; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);" maxWidth="300">
+                        <Label text="Preferences &amp; Matching" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4B9CD3;"/>
+                        <Label text="Find and match with your preferences" style="-fx-font-size: 14px; -fx-text-fill: #6C757D; -fx-wrap-text: true;" wrapText="true"/>
+                        <Region VBox.vgrow="ALWAYS" minHeight="20"/>
+                        <Button text="Tap to learn more" onAction="#showPreferencesMatching" style="-fx-background-color: #4B9CD3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;"/>
+                    </VBox>
+                    
+                    <VBox styleClass="feature-card" style="-fx-background-color: rgba(255,255,255,0.9); -fx-padding: 30; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);" maxWidth="300">
+                        <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../icones/university.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="Universities" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4B9CD3;"/>
+                        <Label text="Explore partner universities and their exchange programs" style="-fx-font-size: 14px; -fx-text-fill: #6C757D; -fx-wrap-text: true;" wrapText="true"/>
+                        <Region VBox.vgrow="ALWAYS" minHeight="20"/>
+                        <Button text="View Universities" onAction="#showUniversitiesPage" style="-fx-background-color: #4B9CD3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;"/>
+                    </VBox>
+                    
+                    <VBox styleClass="feature-card" style="-fx-background-color: rgba(255,255,255,0.9); -fx-padding: 30; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);" maxWidth="300">
+                        <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../icones/applications.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="My Applications" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4B9CD3;"/>
+                        <Label text="Track the status of your exchange program applications" style="-fx-font-size: 14px; -fx-text-fill: #6C757D; -fx-wrap-text: true;" wrapText="true"/>
+                        <Region VBox.vgrow="ALWAYS" minHeight="20"/>
+                        <Button text="View Applications" onAction="#showMyApplicationsPage" style="-fx-background-color: #4B9CD3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;"/>
+                    </VBox>
+                    
+                    <VBox styleClass="feature-card" style="-fx-background-color: rgba(255,255,255,0.9); -fx-padding: 30; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);" maxWidth="300">
+                        <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../icones/calendar.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="Events" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4B9CD3;"/>
+                        <Label text="Discover and participate in university exchange events" style="-fx-font-size: 14px; -fx-text-fill: #6C757D; -fx-wrap-text: true;" wrapText="true"/>
+                        <Region VBox.vgrow="ALWAYS" minHeight="20"/>
+                        <Button text="View Events" onAction="#showEventsPage" style="-fx-background-color: #4B9CD3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </center>
+        
+        <bottom>
+            <HBox alignment="CENTER" spacing="10" style="-fx-background-color: #4B9CD3; -fx-padding: 20;">
+                <Label text="© 2024 BADRO. All rights reserved." style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+            </HBox>
+        </bottom>
+    </BorderPane>
+</StackPane>

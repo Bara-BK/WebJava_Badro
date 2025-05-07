@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" alignment="CENTER" stylesheets="@../styles/table.css"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="tn.badro.Controllers.PreferenceAdminController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <HBox spacing="20">
+        <!-- Form Section -->
+        <VBox spacing="10" prefWidth="300">
+            <Label text="Preference Information" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            
+            <GridPane vgap="10" hgap="10">
+                <Label text="Climat:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="climatField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                
+                <Label text="Country:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="countryComboBox" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="150"/>
+                
+                <Label text="Domain:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="domainField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                
+                <Label text="Language:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <HBox spacing="5" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                    <RadioButton fx:id="englishRadio" text="English" selected="true"/>
+                    <RadioButton fx:id="frenchRadio" text="French"/>
+                    <RadioButton fx:id="arabicRadio" text="Arabic"/>
+                </HBox>
+                
+                <Label text="Teaching Mode:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <HBox spacing="5" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                    <RadioButton fx:id="onlineRadio" text="Online" selected="true"/>
+                    <RadioButton fx:id="inPersonRadio" text="In-Person"/>
+                </HBox>
+                
+                <Label text="Univ. Type:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <TextField fx:id="universityTypeField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                
+                <Label text="Cultural Acts:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                <TextField fx:id="culturalActivitiesField" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                
+                <Label text="Language Level:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                <TextField fx:id="levelField" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                
+                <Label text="User ID:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+                <TextField fx:id="userIdField" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+            </GridPane>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Add" onAction="#handleAddPreference" style="-fx-background-color: #2ecc71; -fx-text-fill: white;"/>
+                <Button text="Update" onAction="#handleUpdatePreference" style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                <Button text="Delete" onAction="#handleDeletePreference" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                <Button text="Clear" onAction="#clearFields" style="-fx-background-color: #95a5a6; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+
+        <!-- Table Section -->
+        <VBox spacing="10" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
+            <Label text="Preferences List" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            
+            <TableView fx:id="preferencesTable" VBox.vgrow="ALWAYS" onMouseClicked="#handleSelectPreference">
+                <columns>
+                    <TableColumn fx:id="idColumn" text="ID" prefWidth="40"/>
+                    <TableColumn fx:id="climatColumn" text="Climat" prefWidth="70"/>
+                    <TableColumn fx:id="countryColumn" text="Country" prefWidth="90"/>
+                    <TableColumn fx:id="domainColumn" text="Domain" prefWidth="100"/>
+                    <TableColumn fx:id="languageColumn" text="Language" prefWidth="80"/>
+                    <TableColumn fx:id="teachingModeColumn" text="Teaching Mode" prefWidth="100"/>
+                    <TableColumn fx:id="universityTypeColumn" text="Univ. Type" prefWidth="90"/>
+                    <TableColumn fx:id="culturalActivitiesColumn" text="Cultural Acts" prefWidth="100"/>
+                    <TableColumn fx:id="levelColumn" text="Level" prefWidth="50"/>
+                    <TableColumn fx:id="userColumn" text="User ID" prefWidth="70"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </HBox>
+</VBox> 

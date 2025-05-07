@@ -1,0 +1,7 @@
+To: guesmijacem8@gmail.com
+From: guesmijacem8@gmail.com
+Subject: BADRO Email Test
+Date: 2025-05-06T23:47:11.774629100
+Content-Type: text/plain
+
+This is a test email from BADRO application. If you received this email, your email configuration is working correctly.

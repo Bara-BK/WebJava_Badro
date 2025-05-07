@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="mainBorderPane" prefHeight="800.0" prefWidth="1200.0" xmlns:fx="http://javafx.com/fxml" fx:controller="tn.badro.Controllers.UserApplicationsController">
+    <top>
+        <HBox alignment="CENTER_RIGHT" spacing="20" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="40" bottom="20" left="40"/>
+            </padding>
+            <Label text="My Applications" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4B9CD3;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Back to Main Menu" onAction="#returnToMainMenu"
+                   style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-size: 14px;"/>
+        </HBox>
+    </top>
+    
+    <center>
+        <VBox spacing="20" style="-fx-background-color: #f8f9fa;">
+            <padding>
+                <Insets top="30" right="40" bottom="40" left="40"/>
+            </padding>
+            
+            <VBox>
+                <Label text="Your Exchange Program Applications" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4B9CD3;"/>
+                <Label text="Track the status of your applications to partner universities" style="-fx-font-size: 14px; -fx-text-fill: #6C757D;"/>
+            </VBox>
+            
+            <!-- Empty state message -->
+            <Label fx:id="emptyStateLabel" text="You haven't applied to any exchange programs yet. Visit the universities page to find and apply for programs." 
+                  style="-fx-font-size: 16px; -fx-text-fill: #6c757d; -fx-padding: 40 0 0 0; -fx-text-alignment: center;"
+                  wrapText="true" visible="false"/>
+            
+            <!-- Applications table -->
+            <TableView fx:id="applicationsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="programColumn" text="Program" prefWidth="150"/>
+                    <TableColumn fx:id="universityColumn" text="University" prefWidth="150"/>
+                    <TableColumn fx:id="dateAppliedColumn" text="Applied On" prefWidth="100"/>
+                    <TableColumn fx:id="startDateColumn" text="Start Date" prefWidth="100"/>
+                    <TableColumn fx:id="endDateColumn" text="End Date" prefWidth="100"/>
+                    <TableColumn fx:id="statusColumn" text="Status" prefWidth="120"/>
+                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="120"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+            
+            <!-- Bottom info bar -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label fx:id="totalApplicationsLabel" text="Total: 0 applications" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                
+                <Label style="-fx-font-size: 14px; -fx-text-fill: #6c757d;" text="Status Legend:"/>
+                
+                <HBox alignment="CENTER" spacing="5">
+                    <Label style="-fx-background-color: #ffc107; -fx-text-fill: white; -fx-padding: 2 8; -fx-background-radius: 4;"
+                          text="Pending"/>
+                    <Label style="-fx-font-size: 12px; -fx-text-fill: #6c757d;" text="Under review"/>
+                </HBox>
+                
+                <HBox alignment="CENTER" spacing="5">
+                    <Label style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-padding: 2 8; -fx-background-radius: 4;"
+                          text="Approved"/>
+                    <Label style="-fx-font-size: 12px; -fx-text-fill: #6c757d;" text="Application accepted"/>
+                </HBox>
+                
+                <HBox alignment="CENTER" spacing="5">
+                    <Label style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-padding: 2 8; -fx-background-radius: 4;"
+                          text="Rejected"/>
+                    <Label style="-fx-font-size: 12px; -fx-text-fill: #6c757d;" text="Application not accepted"/>
+                </HBox>
+            </HBox>
+            
+        </VBox>
+    </center>
+</BorderPane> 

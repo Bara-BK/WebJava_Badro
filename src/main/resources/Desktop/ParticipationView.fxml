@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Label?>
+
+<VBox fx:id="view" alignment="CENTER" spacing="20" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <Label fx:id="nameLabelView" styleClass="title-label" />
+    <Text fx:id="dateText" styleClass="info-text" />
+    <Text fx:id="eventNameText" styleClass="info-text" />
+    <Text fx:id="phoneText" styleClass="info-text" />
+    <Text fx:id="ticketCodeText" styleClass="info-text" />
+    <Text fx:id="paymentMethodText" styleClass="info-text" />
+    <Button fx:id="exportButton" text="Export Ticket as PDF" styleClass="primary-button" onAction="#handleExportTicket" />
+    <Button fx:id="backButton" text="Back" styleClass="primary-button" onAction="#handleCancel" />
+</VBox>

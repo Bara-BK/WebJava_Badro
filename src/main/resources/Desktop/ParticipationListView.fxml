@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+
+<BorderPane fx:id="root" prefHeight="800.0" prefWidth="1200.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <!-- Top Navigation Bar -->
+    <top>
+        <HBox alignment="CENTER_RIGHT" spacing="20" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="40" bottom="20" left="40"/>
+            </padding>
+            
+            <!-- App Logo / Title -->
+            <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
+                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../icones/logo.png" />
+                    </image>
+                </ImageView>
+                <Label fx:id="titleLabel" text="Event Participations" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4B9CD3;"/>
+            </HBox>
+            
+            <Button fx:id="backButton" text="Back to Event" onAction="#handleBackToEvent" 
+                    style="-fx-background-color: transparent; -fx-border-color: #4B9CD3; -fx-text-fill: #4B9CD3; -fx-font-size: 14px; -fx-padding: 5 15; -fx-background-radius: 5; -fx-border-radius: 5; -fx-cursor: hand;">
+                <graphic>
+                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../icones/back.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+        </HBox>
+    </top>
+    
+    <!-- Main Content -->
+    <center>
+        <VBox spacing="15" style="-fx-background-color: #F8FBFD; -fx-padding: 20;">
+            <!-- Search and Filter Section -->
+            <VBox spacing="10" style="-fx-padding: 0 0 15 0;">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <TextField fx:id="searchField" promptText="Search participants..." onKeyReleased="#filterParticipations" HBox.hgrow="ALWAYS">
+                        <style>
+                            -fx-background-color: white;
+                            -fx-border-color: #ddd;
+                            -fx-border-radius: 5;
+                            -fx-background-radius: 5;
+                            -fx-padding: 8 15;
+                        </style>
+                    </TextField>
+                    <ChoiceBox fx:id="sortChoiceBox" onAction="#sortParticipations" style="-fx-padding: 8 15; -fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+                    <Button text="Search" onAction="#filterParticipations"
+                            style="-fx-background-color: #4B9CD3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 16; -fx-background-radius: 5; -fx-cursor: hand;">
+                        <graphic>
+                            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@../icones/search.png" />
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                </HBox>
+                
+                <Button fx:id="createButton" text="Add Participant" onAction="#handleCreateParticipation" 
+                        style="-fx-background-color: #4B9CD3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 16; -fx-background-radius: 5; -fx-cursor: hand;">
+                    <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../icones/add.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </VBox>
+            
+            <!-- Participants List -->
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+                <VBox fx:id="participationsBox" spacing="10" style="-fx-padding: 10;">
+                    <!-- Participants will be added here dynamically -->
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+    
+    <!-- Footer -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="10" style="-fx-background-color: #4B9CD3; -fx-padding: 15;">
+            <Label text="© 2024 BADRO University Exchange Program. All rights reserved." style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+        </HBox>
+    </bottom>
+</BorderPane>

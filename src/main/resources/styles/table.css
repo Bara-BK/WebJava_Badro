@@ -1,0 +1,115 @@
+.table-view {
+    -fx-background-color: white;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: #f5f5f5;
+    -fx-padding: 10px;
+    -fx-border-color: #ddd;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #333;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 5px;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: #f9f9f9;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+.button {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 3px;
+    -fx-padding: 5px 10px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+.text-field {
+    -fx-padding: 5px;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 3px;
+    -fx-background-color: white;
+}
+
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 3px;
+}
+
+.combo-box:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+/* Action buttons in table */
+.action-button {
+    -fx-min-width: 70px;
+    -fx-min-height: 30px;
+    -fx-padding: 5px 10px;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-background-radius: 3px;
+    -fx-border-radius: 3px;
+}
+
+.view-button {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.view-button:hover {
+    -fx-background-color: #1976D2;
+}
+
+.edit-button {
+    -fx-background-color: #FFA500;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.edit-button:hover {
+    -fx-background-color: #FF8C00;
+}
+
+.delete-button {
+    -fx-background-color: #f44336;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.delete-button:hover {
+    -fx-background-color: #d32f2f;
+}
+
+/* Pagination buttons */
+.pagination-button {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-min-width: 40px;
+    -fx-min-height: 30px;
+}
+
+.pagination-button:selected {
+    -fx-background-color: #1a237e;
+    -fx-text-fill: white;
+    -fx-border-color: #1a237e;
+} 

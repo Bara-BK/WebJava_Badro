@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml" fx:controller="tn.badro.Controllers.ProgramApplicationController">
+    <top>
+        <VBox alignment="CENTER" style="-fx-background-color: #4B9CD3; -fx-padding: 20;">
+            <Label text="Program Application" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Complete the form below to apply for the exchange program" style="-fx-font-size: 16px; -fx-text-fill: white; -fx-opacity: 0.9;"/>
+        </VBox>
+    </top>
+    
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox fx:id="applicationFormContainer" spacing="20" style="-fx-background-color: white; -fx-padding: 30;">
+                <padding>
+                    <Insets top="20" right="30" bottom="20" left="30"/>
+                </padding>
+                
+                <!-- Program and University Info -->
+                <VBox spacing="5" style="-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-background-radius: 5;">
+                    <Label text="Program Information" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Separator/>
+                    <HBox spacing="5">
+                        <Label text="Program:" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="programNameLabel" style="-fx-text-fill: #4B9CD3;"/>
+                    </HBox>
+                    <HBox spacing="5">
+                        <Label text="University:" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="universityNameLabel" style="-fx-text-fill: #4B9CD3;"/>
+                    </HBox>
+                </VBox>
+                
+                <!-- Motivation Letter -->
+                <VBox spacing="5">
+                    <Label text="Motivation Letter" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Label text="Explain why you're interested in this program and how it aligns with your academic and career goals (min. 100 characters)." 
+                         style="-fx-text-fill: #6C757D; -fx-font-size: 14px;" wrapText="true"/>
+                    <TextArea fx:id="motivationField" prefRowCount="8" wrapText="true" 
+                            promptText="Write your motivation letter here..."/>
+                </VBox>
+                
+                <!-- Dates -->
+                <VBox spacing="15">
+                    <Label text="Exchange Period" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    
+                    <HBox spacing="15">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="Start Date" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="startDatePicker" prefWidth="300"/>
+                        </VBox>
+                        
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="End Date" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="endDatePicker" prefWidth="300"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+                
+                <!-- Terms and Conditions -->
+                <VBox spacing="5" style="-fx-padding: 15 0 15 0;">
+                    <CheckBox fx:id="agreementCheckbox" text="I agree to the terms and conditions of the exchange program"/>
+                    <Hyperlink text="Read Terms and Conditions" style="-fx-font-size: 12px;"/>
+                </VBox>
+                
+                <!-- Action Buttons -->
+                <HBox spacing="15" alignment="CENTER_RIGHT">
+                    <Button text="Cancel" onAction="#handleCancel" 
+                            style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5;"/>
+                    <Button fx:id="submitButton" text="Submit Application" onAction="#handleSubmitApplication" 
+                            style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5;"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+    
+    <bottom>
+        <HBox alignment="CENTER" spacing="10" style="-fx-background-color: #f8f9fa; -fx-padding: 15;">
+            <Label text="Need assistance? Contact the exchange program office at exchange@university.edu" 
+                 style="-fx-font-size: 14px; -fx-text-fill: #6C757D;"/>
+        </HBox>
+    </bottom>
+</BorderPane> 

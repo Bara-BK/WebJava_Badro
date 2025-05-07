@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="form" alignment="CENTER" spacing="10" styleClass="form" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <Label text="Add Participant" styleClass="form-title"/>
+    <TextField fx:id="nameField" promptText="Participant Name (2-255 characters)" styleClass="text-field"/>
+    <DatePicker fx:id="dateField" promptText="Registration Date (optional)" styleClass="date-picker"/>
+    <TextField fx:id="eventNameField" promptText="Event Name" styleClass="text-field" editable="false"/>
+    <TextField fx:id="phoneField" promptText="Phone Number (7-11 digits, optional)" styleClass="text-field"/>
+    <TextField fx:id="ticketCodeField" promptText="Ticket Code" styleClass="text-field" editable="false"/>
+    <TextField fx:id="paymentMethodField" promptText="Payment Method (e.g., Credit)" styleClass="text-field"/>
+    <Label fx:id="errorLabel" styleClass="error-label"/>
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="saveButton" text="Save" styleClass="primary-button" onAction="#handleSaveParticipation"/>
+        <Button fx:id="cancelButton" text="Cancel" styleClass="secondary-button" onAction="#handleCancel"/>
+    </HBox>
+</VBox>
