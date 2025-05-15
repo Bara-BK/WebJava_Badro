@@ -67,6 +67,18 @@ public class SessionManager {
         return isLoggedIn() ? currentUser.getId() : 0;
     }
 
+    /**
+     * Check if the current user is an admin
+     * @return true if the current user has admin role, false otherwise
+     */
+    public boolean isAdmin() {
+        if (!isLoggedIn()) {
+            return false;
+        }
+        String roles = currentUser.getRoles();
+        return roles != null && (roles.contains("ADMIN") || roles.contains("admin"));
+    }
+
     public String createSession(User user) {
         String sessionId = generateSessionId();
         Session session = new Session(user, LocalDateTime.now());

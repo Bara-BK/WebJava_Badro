@@ -155,12 +155,21 @@ public class EventController {
             NotificationIcon.setVisible(true);
             notificationIconContainer.setVisible(true);
             updateNotificationBadge();
+            
+            // Show admin-only controls for admin users only
+            boolean isAdmin = "admin".equals(currentUser.getRoles());
+            if (createButton != null) createButton.setVisible(isAdmin);
+            if (statisticsButton != null) statisticsButton.setVisible(isAdmin);
         } else if (userDisplayName != null) {
             userDisplayName.setText("");
             userDisplayName.setVisible(false);
             profileButton.setVisible(false);
             NotificationIcon.setVisible(false);
             notificationIconContainer.setVisible(false);
+            
+            // Hide admin-only controls for non-logged in users
+            if (createButton != null) createButton.setVisible(false);
+            if (statisticsButton != null) statisticsButton.setVisible(false);
         }
     }
     
@@ -299,17 +308,26 @@ public class EventController {
     @FXML
     private void showCalendarView() throws IOException {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Desktop/eventCalendar.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Desktop/EventCalendarView.fxml"));
+            
             EventCalendarController calendarController = new EventCalendarController();
             calendarController.setStage(stage);
+            
+            if (currentUser != null) {
+                calendarController.setUserInfo(currentUser);
+            }
+            
             loader.setController(calendarController);
+            
             Scene scene = new Scene(loader.load(), 1200, 800);
+            
             java.net.URL cssUrl = getClass().getResource("/styles/main.css");
             if (cssUrl != null) {
                 scene.getStylesheets().add(cssUrl.toExternalForm());
             } else {
                 System.out.println("Warning: /styles/main.css not found");
             }
+            
             stage.setScene(scene);
             stage.setTitle("Event Management - Calendar");
         } catch (Exception e) {
@@ -496,30 +514,39 @@ public class EventController {
             }
         });
         
-                Button editButton = new Button("Edit");
-        editButton.setStyle("-fx-background-color: #5CB85C; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 16; -fx-background-radius: 5;");
-        editButton.setOnAction(e -> {
-            try {
-                showEditEventForm(event.getEventId());
-            } catch (IOException ex) {
-                showError("Failed to load edit form");
-            }
-        });
+        // Add the view button for all users
+        buttonRow.getChildren().add(viewButton);
         
-                Button deleteButton = new Button("Delete");
-        deleteButton.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 16; -fx-background-radius: 5;");
-                deleteButton.setOnAction(e -> {
-                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + event.getTitre() + "?", ButtonType.YES, ButtonType.NO);
-                    confirm.showAndWait().ifPresent(type -> {
-                        if (type == ButtonType.YES) {
-                    eventService.deleteEvent(event.getEventId());
-                    initializeEventList();
-                    populateEventList();
-                        }
-                    });
+        // Only add edit and delete buttons for admin users
+        boolean isAdmin = currentUser != null && "admin".equals(currentUser.getRoles());
+        if (isAdmin) {
+            Button editButton = new Button("Edit");
+            editButton.setStyle("-fx-background-color: #5CB85C; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 16; -fx-background-radius: 5;");
+            editButton.setOnAction(e -> {
+                try {
+                    showEditEventForm(event.getEventId());
+                } catch (IOException ex) {
+                    showError("Failed to load edit form");
+                }
+            });
+            
+            Button deleteButton = new Button("Delete");
+            deleteButton.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 16; -fx-background-radius: 5;");
+            deleteButton.setOnAction(e -> {
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + event.getTitre() + "?", ButtonType.YES, ButtonType.NO);
+                confirm.showAndWait().ifPresent(type -> {
+                    if (type == ButtonType.YES) {
+                        eventService.deleteEvent(event.getEventId());
+                        initializeEventList();
+                        populateEventList();
+                    }
                 });
-        
-        buttonRow.getChildren().addAll(deleteButton, editButton, viewButton);
+            });
+            
+            // Add admin buttons to the left of the view button
+            buttonRow.getChildren().add(0, deleteButton);
+            buttonRow.getChildren().add(1, editButton);
+        }
         
         infoBox.getChildren().addAll(nameLabel, locationBox, timeBox, descriptionLabel, separator, buttonRow);
         
@@ -530,49 +557,104 @@ public class EventController {
     }
 
     @FXML
-    private void handleCreateEvent() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        java.net.URL fxmlUrl = getClass().getResource("/Desktop/CreateEventForm.fxml");
-        if (fxmlUrl == null) {
-            throw new IOException("Cannot find /Desktop/CreateEventForm.fxml");
+    public void handleCreateEvent() throws IOException {
+        try {
+            // Reset currentEventId to null since we're creating a new event
+            currentEventId = null;
+            
+            // Load the CreateEventForm.fxml file
+            FXMLLoader loader = new FXMLLoader();
+            java.net.URL fxmlUrl = getClass().getResource("/Desktop/CreateEventForm.fxml");
+            if (fxmlUrl == null) {
+                throw new IOException("Cannot find /Desktop/CreateEventForm.fxml");
+            }
+            
+            System.out.println("Loading FXML: " + fxmlUrl);
+            loader.setLocation(fxmlUrl);
+            loader.setController(this);
+            
+            // Load the scene
+            Scene scene = new Scene(loader.load(), 400, 600);
+            java.net.URL cssUrl = getClass().getResource("/styles/styles.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            } else {
+                System.out.println("Warning: /styles/styles.css not found");
+            }
+            
+            // Initialize form fields
+            typeField.setItems(typeItems);
+            typeField.setValue("");
+            
+            // Clear all form fields for a new event
+            titleField.setText("");
+            descField.setText("");
+            dateField.setValue(LocalDate.now());
+            timeField.setText(LocalTime.now().toString());
+            locationField.setText("");
+            organizerField.setText("");
+            maxParticipantsField.setText("");
+            statusField.setText("Open");
+            ticketPriceField.setText("");
+            registrationEndField.setText("");
+            errorLabel.setText("");
+            
+            // Set the scene
+            stage.setTitle("Create New Event");
+            stage.setScene(scene);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Failed to open create event form: " + e.getMessage());
         }
-        System.out.println("Loading FXML: " + fxmlUrl);
-        loader.setLocation(fxmlUrl);
-        loader.setController(this);
-        Scene scene = new Scene(loader.load(), 400, 600);
-        java.net.URL cssUrl = getClass().getResource("/styles/styles.css");
-        if (cssUrl != null) {
-            scene.getStylesheets().add(cssUrl.toExternalForm());
-        } else {
-            System.out.println("Warning: /styles/styles.css not found");
-        }
-        typeField.setItems(typeItems);
-        typeField.setValue("");
-        stage.setScene(scene);
     }
 
     @FXML
     private void handleSaveEvent() {
+        try {
+            // Create and populate a new Event object
+            Event event = new Event();
+            event.setTitre(titleField.getText());
+            event.setDescription(descField.getText().isEmpty() ? null : descField.getText());
+            event.setDate(dateField.getValue());
+            
+            // Handle time parsing
             try {
-                Event event = new Event();
-                event.setTitre(titleField.getText());
-                event.setDescription(descField.getText().isEmpty() ? null : descField.getText());
-                event.setDate(dateField.getValue());
                 event.setHeure(timeField.getText().isEmpty() ? LocalTime.now() : LocalTime.parse(timeField.getText()));
-                event.setLieu(locationField.getText().isEmpty() ? null : locationField.getText());
+            } catch (Exception e) {
+                errorLabel.setText("Invalid time format. Please use HH:mm");
+                return;
+            }
+            
+            event.setLieu(locationField.getText().isEmpty() ? null : locationField.getText());
+            
+            // Handle type
             String typeValue = typeField.getValue();
-            event.setType(typeValue.isEmpty() ? null : typeValue);
-                event.setOrganisateurNom(organizerField.getText().isEmpty() ? null : organizerField.getText());
-                event.setNombreMaxParticipants(maxParticipantsField.getText().isEmpty() ? null : Integer.parseInt(maxParticipantsField.getText()));
-                event.setStatus(statusField.getText().isEmpty() ? null : statusField.getText());
-                event.setTicketPrix(ticketPriceField.getText().isEmpty() ? null : ticketPriceField.getText());
-                event.setPeriodeInscriptionFin(registrationEndField.getText().isEmpty() ? null : registrationEndField.getText());
-                eventService.createEvent(event);
+            event.setType(typeValue == null || typeValue.isEmpty() ? null : typeValue);
+            
+            event.setOrganisateurNom(organizerField.getText().isEmpty() ? null : organizerField.getText());
+            
+            // Handle max participants parsing
+            try {
+                event.setNombreMaxParticipants(maxParticipantsField.getText().isEmpty() ? null : 
+                                               Integer.parseInt(maxParticipantsField.getText()));
+            } catch (NumberFormatException e) {
+                errorLabel.setText("Max participants must be a number");
+                return;
+            }
+            
+            event.setStatus(statusField.getText().isEmpty() ? "Open" : statusField.getText());
+            event.setTicketPrix(ticketPriceField.getText().isEmpty() ? null : ticketPriceField.getText());
+            event.setPeriodeInscriptionFin(registrationEndField.getText().isEmpty() ? null : registrationEndField.getText());
+            
+            // Save the event to the database
+            eventService.createEvent(event);
+            
+            // Display confirmation and return to the event list
+            System.out.println("Event created successfully");
             showEventListView();
-            } catch (IllegalArgumentException | java.time.format.DateTimeParseException ex) {
-                errorLabel.setText(ex.getMessage());
-        } catch (IOException ex) {
-            showError("Failed to return to event list");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            errorLabel.setText("Error creating event: " + ex.getMessage());
         }
     }
 
@@ -623,29 +705,57 @@ public class EventController {
                 showError("Event not found");
                 return;
             }
+            
+            // Get the existing event
             Event event = eventOpt.get();
-                event.setTitre(titleField.getText());
-                event.setDescription(descField.getText().isEmpty() ? null : descField.getText());
-                event.setDate(dateField.getValue());
+            
+            // Update the event with form values
+            event.setTitre(titleField.getText());
+            event.setDescription(descField.getText().isEmpty() ? null : descField.getText());
+            event.setDate(dateField.getValue());
+            
+            // Handle time parsing
+            try {
                 event.setHeure(timeField.getText().isEmpty() ? LocalTime.now() : LocalTime.parse(timeField.getText()));
-                event.setLieu(locationField.getText().isEmpty() ? null : locationField.getText());
+            } catch (Exception e) {
+                errorLabel.setText("Invalid time format. Please use HH:mm");
+                return;
+            }
+            
+            event.setLieu(locationField.getText().isEmpty() ? null : locationField.getText());
+            
+            // Handle type
             String typeValue = typeField.getValue();
-            event.setType(typeValue.isEmpty() ? null : typeValue);
-                event.setOrganisateurNom(organizerField.getText().isEmpty() ? null : organizerField.getText());
-                event.setNombreMaxParticipants(maxParticipantsField.getText().isEmpty() ? null : Integer.parseInt(maxParticipantsField.getText()));
-                event.setStatus(statusField.getText().isEmpty() ? null : statusField.getText());
-                event.setTicketPrix(ticketPriceField.getText().isEmpty() ? null : ticketPriceField.getText());
-                event.setPeriodeInscriptionFin(registrationEndField.getText().isEmpty() ? null : registrationEndField.getText());
+            event.setType(typeValue == null || typeValue.isEmpty() ? null : typeValue);
+            
+            event.setOrganisateurNom(organizerField.getText().isEmpty() ? null : organizerField.getText());
+            
+            // Handle max participants parsing
+            try {
+                event.setNombreMaxParticipants(maxParticipantsField.getText().isEmpty() ? null : 
+                                              Integer.parseInt(maxParticipantsField.getText()));
+            } catch (NumberFormatException e) {
+                errorLabel.setText("Max participants must be a number");
+                return;
+            }
+            
+            event.setStatus(statusField.getText().isEmpty() ? "Open" : statusField.getText());
+            event.setTicketPrix(ticketPriceField.getText().isEmpty() ? null : ticketPriceField.getText());
+            event.setPeriodeInscriptionFin(registrationEndField.getText().isEmpty() ? null : registrationEndField.getText());
+            
+            // Save changes to database
             eventService.updateEvent(currentEventId, event);
+            
+            // Return to the event list view
+            System.out.println("Event updated successfully");
             showEventListView();
-            } catch (IllegalArgumentException | java.time.format.DateTimeParseException ex) {
-                errorLabel.setText(ex.getMessage());
-        } catch (IOException ex) {
-            showError("Failed to return to event list");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            errorLabel.setText("Error updating event: " + ex.getMessage());
         }
     }
 
-    private void showEventView(Integer id) throws IOException {
+    public void showEventView(Integer id) throws IOException {
         Optional<Event> eventOpt = eventService.getEventById(id);
         if (eventOpt.isEmpty()) {
             showError("Event not found");

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<BorderPane prefHeight="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.badro.Controllers.ExperienceFormController" style="-fx-background-color: #f8f9fa;">
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #307D91;">
+                <padding>
+                    <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                </padding>
+                <Button fx:id="btnBack" mnemonicParsing="false" onAction="#onCancelClicked" style="-fx-background-color: transparent;">
+                    <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@images/back_icon.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Label fx:id="formTitle" text="Share Your Experience" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;">
+            <VBox spacing="15.0" style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+                <padding>
+                    <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                </padding>
+                
+                <Label text="Title" style="-fx-font-weight: bold; -fx-text-fill: #307D91; -fx-font-size: 14px;"/>
+                <TextField fx:id="titleField" promptText="Enter title" style="-fx-padding: 10; -fx-background-radius: 4;"/>
+                
+                <Label text="Description" style="-fx-font-weight: bold; -fx-text-fill: #307D91; -fx-font-size: 14px;"/>
+                <TextArea fx:id="descriptionArea" promptText="Share your experience in detail..." prefHeight="150.0" wrapText="true" style="-fx-padding: 10; -fx-background-radius: 4;"/>
+                
+                <Label text="Location" style="-fx-font-weight: bold; -fx-text-fill: #307D91; -fx-font-size: 14px;"/>
+                <TextField fx:id="locationField" promptText="Where did this experience take place?" style="-fx-padding: 10; -fx-background-radius: 4;"/>
+                
+                <Label text="Destination" style="-fx-font-weight: bold; -fx-text-fill: #307D91; -fx-font-size: 14px;"/>
+                <TextField fx:id="destinationField" promptText="What was the main destination of this experience?" style="-fx-padding: 10; -fx-background-radius: 4;"/>
+                
+                <VBox spacing="5">
+                    <Label text="Upload Image" style="-fx-font-weight: bold; -fx-text-fill: #307D91; -fx-font-size: 14px;"/>
+                    <HBox spacing="10.0" alignment="CENTER_LEFT">
+                        <TextField fx:id="imagePathField" promptText="No file selected" HBox.hgrow="ALWAYS" editable="false" style="-fx-padding: 10; -fx-background-radius: 4;"/>
+                        <Button fx:id="btnBrowse" mnemonicParsing="false" onAction="#onBrowseClicked" text="Browse" 
+                                style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-padding: 8 15; -fx-background-radius: 4;"/>
+                    </HBox>
+                </VBox>
+                
+                <Region VBox.vgrow="ALWAYS" minHeight="20" />
+                
+                <Separator />
+                
+                <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                    <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#onCancelClicked" text="Cancel" 
+                            style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-text-fill: #495057; -fx-padding: 8 20; -fx-background-radius: 4; -fx-border-radius: 4;"/>
+                    <Button fx:id="btnSave" defaultButton="true" mnemonicParsing="false" onAction="#onSaveClicked" 
+                            style="-fx-background-color: #307D91; -fx-text-fill: white; -fx-padding: 8 20; -fx-background-radius: 4; -fx-font-weight: bold;" text="Save Experience" />
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane> 

@@ -41,6 +41,8 @@
                     <Label fx:id="userDisplayName" style="-fx-text-fill: #4B9CD3; -fx-font-size: 14px;"/>
                     <Button fx:id="profileButton" text="Profile" onAction="#showProfile" visible="false"
                             style="-fx-background-color: transparent; -fx-border-color: #4B9CD3; -fx-text-fill: #4B9CD3; -fx-font-size: 14px; -fx-padding: 5 15; -fx-background-radius: 5; -fx-border-radius: 5; -fx-cursor: hand;"/>
+                    <Button fx:id="dashboardButton" text="Dashboard" onAction="#showDashboard" visible="false"
+                            style="-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 5 15; -fx-background-radius: 5; -fx-border-radius: 5; -fx-cursor: hand;"/>
                     <Button fx:id="loginButton" text="Login" onAction="#showLogin" visible="true"
                             style="-fx-background-color: #4B9CD3; -fx-text-fill: white;"/>
                     <Button fx:id="registerButton" text="Register" onAction="#showRegister" visible="true"
@@ -104,6 +106,18 @@
                         <Label text="Discover and participate in university exchange events" style="-fx-font-size: 14px; -fx-text-fill: #6C757D; -fx-wrap-text: true;" wrapText="true"/>
                         <Region VBox.vgrow="ALWAYS" minHeight="20"/>
                         <Button text="View Events" onAction="#showEventsPage" style="-fx-background-color: #4B9CD3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;"/>
+                    </VBox>
+                    
+                    <VBox styleClass="feature-card" style="-fx-background-color: rgba(255,255,255,0.9); -fx-padding: 30; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);" maxWidth="300">
+                        <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../icones/experiences.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="Experiences" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4B9CD3;"/>
+                        <Label text="Share your study abroad experiences and connect with others" style="-fx-font-size: 14px; -fx-text-fill: #6C757D; -fx-wrap-text: true;" wrapText="true"/>
+                        <Region VBox.vgrow="ALWAYS" minHeight="20"/>
+                        <Button text="View Experiences" onAction="#showExperiencesPage" style="-fx-background-color: #4B9CD3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;"/>
                     </VBox>
                 </HBox>
             </VBox>

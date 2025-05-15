@@ -25,6 +25,7 @@ import javafx.geometry.Pos;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.net.URL;
 
 public class DashboardController {
     private Stage stage;
@@ -81,6 +82,9 @@ public class DashboardController {
     private Button returnToMainBtn;
     
     @FXML
+    private Button experiencesBtn;
+    
+    @FXML
     private ImageView NotificationIcon;
     
     @FXML
@@ -134,6 +138,9 @@ public class DashboardController {
             if (applicationsBtn != null) {
                 applicationsBtn.setOnAction(e -> showApplicationsContent());
             }
+            if (experiencesBtn != null) {
+                experiencesBtn.setOnAction(e -> showExperiencesContent());
+            }
             if (returnToMainBtn != null) {
                 returnToMainBtn.setOnAction(e -> returnToMainMenu());
             }
@@ -142,8 +149,7 @@ public class DashboardController {
             updateNotificationBadge();
             
             // Add listener for notification changes
-            NotificationManager.getInstance().getNotifications().addListener(
-                (javafx.collections.ListChangeListener<Notification>) c -> updateNotificationBadge());
+            NotificationManager.getInstance().setOnNotificationAddedCallback(this::updateNotificationBadge);
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -231,12 +237,58 @@ public class DashboardController {
     @FXML
     private void showApplicationsContent() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Desktop/applications.fxml"));
-            Node applicationsContent = loader.load();
-            mainLayout.setCenter(applicationsContent);
+            // First check if resource exists
+            URL resource = getClass().getResource("/Desktop/programApplications.fxml");
+            if (resource == null) {
+                // If resource doesn't exist, show a placeholder message
+                VBox placeholder = new VBox();
+                placeholder.setAlignment(Pos.CENTER);
+                placeholder.setSpacing(20);
+                
+                Label titleLabel = new Label("Program Applications");
+                titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4B9CD3;");
+                
+                Label infoLabel = new Label("This module is currently under development.");
+                infoLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #6c757d;");
+                
+                placeholder.getChildren().addAll(titleLabel, infoLabel);
+                mainLayout.setCenter(placeholder);
+                return;
+            }
+            
+            // If resource exists, load it normally
+            FXMLLoader loader = new FXMLLoader(resource);
+            VBox applicationsView = loader.load();
+            mainLayout.setCenter(applicationsView);
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to load applications content: " + e.getMessage());
+            
+            // Create a placeholder on error
+            VBox errorPlaceholder = new VBox();
+            errorPlaceholder.setAlignment(Pos.CENTER);
+            errorPlaceholder.setSpacing(20);
+            
+            Label errorTitle = new Label("Could Not Load Applications");
+            errorTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;");
+            
+            Label errorMsg = new Label("An error occurred while loading the applications module.\nPlease try again later.");
+            errorMsg.setStyle("-fx-font-size: 16px; -fx-text-fill: #6c757d; -fx-text-alignment: center;");
+            errorMsg.setWrapText(true);
+            
+            errorPlaceholder.getChildren().addAll(errorTitle, errorMsg);
+            mainLayout.setCenter(errorPlaceholder);
+        }
+    }
+
+    @FXML
+    private void showExperiencesContent() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Desktop/experienceAdmin.fxml"));
+            Parent experiencesView = loader.load();
+            mainLayout.setCenter(experiencesView);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to load experiences content: " + e.getMessage());
         }
     }
 

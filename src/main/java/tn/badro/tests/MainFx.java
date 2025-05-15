@@ -16,18 +16,18 @@ public class MainFx extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            // Load the main menu FXML
-            URL fxmlLocation = getClass().getResource("/Desktop/mainMenu.fxml");
+            // Load the login FXML instead of main menu
+            URL fxmlLocation = getClass().getResource("/Desktop/login.fxml");
             if (fxmlLocation == null) {
-                LOGGER.log(Level.SEVERE, "FXML not found: /Desktop/mainMenu.fxml");
-                throw new IllegalStateException("FXML not found: /Desktop/mainMenu.fxml");
+                LOGGER.log(Level.SEVERE, "FXML not found: /Desktop/login.fxml");
+                throw new IllegalStateException("FXML not found: /Desktop/login.fxml");
             }
 
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
 
             Scene scene = new Scene(root);
-            stage.setTitle("BADRO - Event Management System");
+            stage.setTitle("BADRO - Login");
             stage.setScene(scene);
             stage.setMaximized(true);
             stage.show();

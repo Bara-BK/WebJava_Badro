@@ -7,12 +7,88 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 public class UserService {
     private final MyDataBase dbConnection;
 
     public UserService() {
         this.dbConnection = MyDataBase.getInstance();
+    }
+
+    /**
+     * Hashes a password using SHA-256 with a random salt
+     * @param password The plain text password to hash
+     * @return The hashed password with salt, format: salt:hash
+     */
+    public String hashPassword(String password) {
+        try {
+            // Generate a random salt
+            SecureRandom random = new SecureRandom();
+            byte[] salt = new byte[16];
+            random.nextBytes(salt);
+            
+            // Create MessageDigest instance for SHA-256
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            
+            // Add salt to digest
+            md.update(salt);
+            
+            // Get the hashed password
+            byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            
+            // Convert salt and hash to Base64 for storage
+            String saltBase64 = Base64.getEncoder().encodeToString(salt);
+            String hashBase64 = Base64.getEncoder().encodeToString(hashedPassword);
+            
+            // Return salt:hash format
+            return saltBase64 + ":" + hashBase64;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
+    }
+    
+    /**
+     * Verifies a password against its stored hash
+     * @param password The plain text password to verify
+     * @param storedHash The stored password hash (salt:hash)
+     * @return true if password matches, false otherwise
+     */
+    public boolean verifyPassword(String password, String storedHash) {
+        try {
+            // Split stored hash to get salt and hash
+            String[] parts = storedHash.split(":");
+            if (parts.length != 2) {
+                return false;
+            }
+            
+            String saltBase64 = parts[0];
+            String storedHashBase64 = parts[1];
+            
+            // Decode Base64
+            byte[] salt = Base64.getDecoder().decode(saltBase64);
+            
+            // Create MessageDigest instance for SHA-256
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            
+            // Add salt to digest
+            md.update(salt);
+            
+            // Calculate hash of provided password
+            byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            
+            // Convert to Base64 for comparison
+            String newHashBase64 = Base64.getEncoder().encodeToString(hashedPassword);
+            
+            // Compare hashes
+            return newHashBase64.equals(storedHashBase64);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error verifying password", e);
+        }
     }
 
     public List<User> getAllUsers() {
@@ -75,10 +151,13 @@ public class UserService {
         try (Connection conn = dbConnection.getCnx();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
+            // Hash the password before storing it
+            String hashedPassword = hashPassword(user.getPassword());
+
             pstmt.setString(1, user.getNom());
             pstmt.setString(2, user.getPrenom());
             pstmt.setString(3, user.getEmail());
-            pstmt.setString(4, user.getPassword());
+            pstmt.setString(4, hashedPassword);
             pstmt.setString(5, user.getNumtlf());
             pstmt.setInt(6, user.getAge());
             pstmt.setString(7, user.getRoles());
@@ -94,6 +173,15 @@ public class UserService {
     }
 
     public void updateUser(int id, User user) {
+        // Check if password was changed
+        User existingUser = getUserById(id).orElse(null);
+        String passwordToUse = user.getPassword();
+        
+        if (existingUser != null && !passwordToUse.equals(existingUser.getPassword())) {
+            // If password was changed, hash the new password
+            passwordToUse = hashPassword(passwordToUse);
+        }
+        
         String sql = "UPDATE user SET nom = ?, prenom = ?, email = ?, password = ?, numtlf = ?, age = ?, roles = ? WHERE id = ?";
 
         try (Connection conn = dbConnection.getCnx();
@@ -102,7 +190,7 @@ public class UserService {
             pstmt.setString(1, user.getNom());
             pstmt.setString(2, user.getPrenom());
             pstmt.setString(3, user.getEmail());
-            pstmt.setString(4, user.getPassword());
+            pstmt.setString(4, passwordToUse);
             pstmt.setString(5, user.getNumtlf());
             pstmt.setInt(6, user.getAge());
             pstmt.setString(7, user.getRoles());
@@ -190,7 +278,7 @@ public class UserService {
         String query = "UPDATE user SET password = ? WHERE id = ?";
         try (Connection conn = dbConnection.getCnx();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, newPassword);
+            pstmt.setString(1, hashPassword(newPassword));
             pstmt.setInt(2, userId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -232,25 +320,29 @@ public class UserService {
     }
     
     public User authenticateUser(String email, String password) {
-        String query = "SELECT * FROM user WHERE email = ? AND password = ?";
+        String query = "SELECT * FROM user WHERE email = ?";
         try (Connection conn = dbConnection.getCnx();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setString(1, email);
-            pstmt.setString(2, password);
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    User user = new User();
-                    user.setId(rs.getInt("id"));
-                    user.setNom(rs.getString("nom"));
-                    user.setPrenom(rs.getString("prenom"));
-                    user.setEmail(rs.getString("email"));
-                    user.setPassword(rs.getString("password"));
-                    user.setNumtlf(rs.getString("numtlf"));
-                    user.setAge(rs.getInt("age"));
-                    user.setRoles(rs.getString("roles"));
-                    return user;
+                    String storedHash = rs.getString("password");
+                    
+                    // Verify the password
+                    if (verifyPassword(password, storedHash)) {
+                        User user = new User();
+                        user.setId(rs.getInt("id"));
+                        user.setNom(rs.getString("nom"));
+                        user.setPrenom(rs.getString("prenom"));
+                        user.setEmail(rs.getString("email"));
+                        user.setPassword(storedHash); // Store the hashed password
+                        user.setNumtlf(rs.getString("numtlf"));
+                        user.setAge(rs.getInt("age"));
+                        user.setRoles(rs.getString("roles"));
+                        return user;
+                    }
                 }
             }
         } catch (SQLException e) {

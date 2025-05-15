@@ -1,9 +1,10 @@
 package tn.badro.Controllers;
 
 import tn.badro.entities.User;
-import tn.badro.services.SessionManager;
 import tn.badro.entities.Notification;
 import tn.badro.entities.NotificationManager;
+import tn.badro.services.SessionManager;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -30,13 +31,15 @@ import javafx.scene.control.Alert;
 import tn.badro.services.EventService;
 import tn.badro.services.ParticipationService;
 import tn.badro.Controllers.EventController;
+import tn.badro.Controllers.ExperienceController;
 
 public class MainMenuController {
     @FXML private Label userDisplayName;
     @FXML private Button loginButton;
     @FXML private Button registerButton;
     @FXML private Button logoutButton;
-    @FXML private Button profileButton; // Added profile button
+    @FXML private Button profileButton;
+    @FXML private Button dashboardButton;
     @FXML private HBox userInfoSection;
     @FXML private BorderPane mainMenuBorderPane;
     @FXML private ImageView NotificationIcon;
@@ -62,22 +65,28 @@ public class MainMenuController {
             loginButton.setVisible(false);
             registerButton.setVisible(false);
             logoutButton.setVisible(true);
-            profileButton.setVisible(true); // Show profile button when logged in
-            NotificationIcon.setVisible(true); // Show notification icon when logged in
-            notificationIconContainer.setVisible(true); // Show notification container when logged in
-            updateNotificationBadge(); // Update notification badge count
-            // Add listener for notification changes
-            NotificationManager.getInstance().getNotifications().addListener(
-                (javafx.collections.ListChangeListener<Notification>) c -> updateNotificationBadge());
+            profileButton.setVisible(true);
+            
+            if (currentUser.getRoles().equals("admin")) {
+                dashboardButton.setVisible(true);
+            } else {
+                dashboardButton.setVisible(false);
+            }
+            
+            NotificationIcon.setVisible(true);
+            notificationIconContainer.setVisible(true);
+            updateNotificationBadge();
+            NotificationManager.getInstance().setOnNotificationAddedCallback(this::updateNotificationBadge);
         } else {
             userDisplayName.setText("");
             loginButton.setVisible(true);
             registerButton.setVisible(true);
             logoutButton.setVisible(false);
-            profileButton.setVisible(false); // Hide profile button when not logged in
-            NotificationIcon.setVisible(false); // Hide notification icon when not logged in
-            notificationIconContainer.setVisible(false); // Hide notification container when not logged in
-            notificationBadge.setVisible(false); // Hide notification badge when not logged in
+            profileButton.setVisible(false);
+            dashboardButton.setVisible(false);
+            NotificationIcon.setVisible(false);
+            notificationIconContainer.setVisible(false);
+            notificationBadge.setVisible(false);
         }
     }
 
@@ -139,6 +148,30 @@ public class MainMenuController {
     }
 
     @FXML
+    private void showDashboard() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Desktop/dashboard.fxml"));
+            Parent root = loader.load();
+            
+            DashboardController controller = loader.getController();
+            Stage stage = (Stage) mainMenuBorderPane.getScene().getWindow();
+            controller.setStage(stage);
+            controller.setUserInfo(currentUser);
+            
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Navigation Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Failed to navigate to dashboard: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
     private void showUniversities(ActionEvent event) throws Exception {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         UniversityController universityController = new UniversityController();
@@ -152,12 +185,6 @@ public class MainMenuController {
     @FXML
     private void showPreferencesMatching() {
         try {
-            // Check if user is logged in
-            if (!SessionManager.getInstance().isLoggedIn()) {
-                showLoginRequiredAlert();
-                return;
-            }
-            
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Desktop/preference.fxml"));
             Parent preferencesRoot = loader.load();
             Stage stage = (Stage) mainMenuBorderPane.getScene().getWindow();
@@ -171,12 +198,6 @@ public class MainMenuController {
     @FXML
     private void showUniversitiesPage() {
         try {
-            // Check if user is logged in
-            if (!SessionManager.getInstance().isLoggedIn()) {
-                showLoginRequiredAlert();
-                return;
-            }
-            
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Desktop/universityFrontend.fxml"));
             Parent universitiesRoot = loader.load();
             UniversityFrontendController controller = loader.getController();
@@ -187,7 +208,6 @@ public class MainMenuController {
             stage.setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();
-            // Show error message
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Navigation Error");
             alert.setHeaderText(null);
@@ -199,12 +219,6 @@ public class MainMenuController {
     @FXML
     private void showMyApplicationsPage() {
         try {
-            // Check if user is logged in
-            if (!SessionManager.getInstance().isLoggedIn()) {
-                showLoginRequiredAlert();
-                return;
-            }
-            
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Desktop/userApplications.fxml"));
             Parent applicationsRoot = loader.load();
             UserApplicationsController controller = loader.getController();
@@ -215,7 +229,6 @@ public class MainMenuController {
             stage.setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();
-            // Show error message
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Navigation Error");
             alert.setHeaderText(null);
@@ -227,123 +240,133 @@ public class MainMenuController {
     @FXML
     private void showEventsPage() {
         try {
-            // Check if user is logged in
-            if (!SessionManager.getInstance().isLoggedIn()) {
-                showLoginRequiredAlert();
-                return;
-            }
-            
+            // Create the services needed for EventController
             EventService eventService = new EventService();
             ParticipationService participationService = new ParticipationService();
-            EventController eventController = new EventController(eventService, participationService);
             
+            // Create the controller with services
+            EventController controller = new EventController(eventService, participationService);
+            
+            // Set up the controller with stage and user info
             Stage stage = (Stage) mainMenuBorderPane.getScene().getWindow();
-            eventController.setStage(stage);
-            
-            // Set the current user information
+            controller.setStage(stage);
             if (currentUser != null) {
-                eventController.setUserInfo(currentUser);
+                controller.setUserInfo(currentUser);
             }
             
-            // Show the event list view
-            eventController.showEventListView();
-            
+            // Use controller's method to load and display events
+            // This ensures events are properly loaded and displayed
+            controller.showEventListView();
         } catch (IOException e) {
             e.printStackTrace();
-            // Show error message
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Navigation Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Failed to navigate to events page: " + e.getMessage());
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", "Failed to navigate to events page: " + e.getMessage());
+        }
+    }
+    
+    @FXML
+    private void showExperiencesPage() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tn/badro/experience.fxml"));
+            Parent experiencesRoot = loader.load();
+            
+            Stage stage = (Stage) mainMenuBorderPane.getScene().getWindow();
+            Scene scene = new Scene(experiencesRoot);
+            stage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to navigate to experiences page: " + e.getMessage());
+        }
+    }
+    
+    @FXML
+    private void showNotifications() {
+        if (currentUser == null) return;
+        
+        if (notificationPopup != null && notificationPopup.isShowing()) {
+            notificationPopup.hide();
+            return;
+        }
+        
+        try {
+            // Create popup content
+            notificationPopup = new Popup();
+            notificationPopup.setAutoHide(true);
+
+            VBox notificationBox = new VBox();
+            notificationBox.setSpacing(0);
+            notificationBox.setStyle("-fx-background-color: white; -fx-padding: 0; -fx-border-color: #307D91; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-effect: dropshadow(gaussian, #024F65, 10, 0.5, 0, 2);");
+            notificationBox.setPrefWidth(380);
+            notificationBox.setMaxWidth(380);
+            notificationBox.setMinWidth(320);
+
+            Label title = new Label("Notifications");
+            title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 16 16 12 16; -fx-text-fill: #307D91;");
+            notificationBox.getChildren().add(title);
+
+            ScrollPane scrollPane = new ScrollPane();
+            scrollPane.setFitToWidth(true);
+            scrollPane.setPrefHeight(340);
+            VBox notifList = new VBox(0);
+            notifList.setStyle("-fx-padding: 0 0 8 0;");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            for (Notification n : NotificationManager.getInstance().getNotifications()) {
+                VBox notifItem = new VBox();
+                notifItem.setStyle("-fx-padding: 12 16 10 16; -fx-background-color: " + (n.isRead() ? "#f8f9fa;" : "#eaf6fa;") + "-fx-background-radius: 8; -fx-border-width: 0 0 1 0; -fx-border-color: #f0f0f0;");
+                Label msg = new Label(n.getMessage());
+                msg.setWrapText(true);
+                msg.setStyle("-fx-font-size: 15px; -fx-text-fill: #222; -fx-font-weight: normal;");
+                Label time = new Label(n.getTimestamp().format(formatter));
+                time.setStyle("-fx-font-size: 12px; -fx-text-fill: #888; -fx-padding: 4 0 0 0;");
+                notifItem.getChildren().addAll(msg, time);
+                notifList.getChildren().add(notifItem);
+            }
+            scrollPane.setContent(notifList);
+            notificationBox.getChildren().add(scrollPane);
+
+            notificationPopup.getContent().add(notificationBox);
+            
+            // Position popup below notification icon
+            Stage stage = (Stage) mainMenuBorderPane.getScene().getWindow();
+            notificationPopup.show(stage, 
+                NotificationIcon.localToScreen(NotificationIcon.getBoundsInLocal()).getMinX(), 
+                NotificationIcon.localToScreen(NotificationIcon.getBoundsInLocal()).getMaxY());
+            
+            // Mark notifications as read when popup is closed
+            notificationPopup.setOnHidden(e -> {
+                NotificationManager.getInstance().markAllAsRead();
+                updateNotificationBadge();
+            });
+            
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     
     @FXML
     private void handleNotificationIconClick() {
-        if (notificationPopup != null && notificationPopup.isShowing()) {
-            notificationPopup.hide();
-            return;
-        }
-        notificationPopup = new Popup();
-        notificationPopup.setAutoHide(true);
-
-        VBox notificationBox = new VBox();
-        notificationBox.setSpacing(0);
-        notificationBox.setStyle("-fx-background-color: white; -fx-padding: 0; -fx-border-color: #307D91; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-effect: dropshadow(gaussian, #024F65, 10, 0.5, 0, 2);");
-        notificationBox.setPrefWidth(380);
-        notificationBox.setMaxWidth(380);
-        notificationBox.setMinWidth(320);
-
-        Label title = new Label("Notifications");
-        title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 16 16 12 16; -fx-text-fill: #307D91;");
-        notificationBox.getChildren().add(title);
-
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPrefHeight(340);
-        VBox notifList = new VBox(0);
-        notifList.setStyle("-fx-padding: 0 0 8 0;");
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        for (Notification n : NotificationManager.getInstance().getNotifications()) {
-            VBox notifItem = new VBox();
-            notifItem.setStyle("-fx-padding: 12 16 10 16; -fx-background-color: " + (n.isRead() ? "#f8f9fa;" : "#eaf6fa;") + "-fx-background-radius: 8; -fx-border-width: 0 0 1 0; -fx-border-color: #f0f0f0;");
-            Label msg = new Label(n.getMessage());
-            msg.setWrapText(true);
-            msg.setStyle("-fx-font-size: 15px; -fx-text-fill: #222; -fx-font-weight: normal;");
-            Label time = new Label(n.getTimestamp().format(formatter));
-            time.setStyle("-fx-font-size: 12px; -fx-text-fill: #888; -fx-padding: 4 0 0 0;");
-            notifItem.getChildren().addAll(msg, time);
-            notifList.getChildren().add(notifItem);
-        }
-        scrollPane.setContent(notifList);
-        notificationBox.getChildren().add(scrollPane);
-
-        notificationPopup.getContent().clear();
-        notificationPopup.getContent().add(notificationBox);
-
-        // Position the popup at the top right, aligned with the notification icon
-        Point2D iconScreenPos = NotificationIcon.localToScreen(0, 0);
-        notificationPopup.show(NotificationIcon, iconScreenPos.getX() - 320, iconScreenPos.getY() + NotificationIcon.getFitHeight() + 8);
-        NotificationManager.getInstance().markAllAsRead();
-        updateNotificationBadge();
+        showNotifications();
     }
     
-    /**
-     * Updates the notification badge count
-     */
     private void updateNotificationBadge() {
-        long unread = NotificationManager.getInstance().getUnreadCount();
-        notificationBadge.setText(unread > 0 ? String.valueOf(unread) : "");
-        notificationBadge.setVisible(unread > 0);
+        if (currentUser != null) {
+            int unreadCount = NotificationManager.getInstance().getUnreadCount();
+            notificationBadge.setText(String.valueOf(unreadCount));
+            notificationBadge.setVisible(unreadCount > 0);
+        } else {
+            notificationBadge.setVisible(false);
+        }
     }
     
-    /**
-     * Show alert that login is required
-     */
-    private void showLoginRequiredAlert() {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Login Required");
-        alert.setHeaderText("Authentication Required");
-        alert.setContentText("You must be logged in to access the preferences page.");
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
         alert.showAndWait();
-        
-        // Redirect to login page
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Desktop/login.fxml"));
-            Parent loginRoot = loader.load();
-            Stage stage = (Stage) mainMenuBorderPane.getScene().getWindow();
-            stage.setScene(new Scene(loginRoot));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public User getCurrentUser() {
         return currentUser;
     }
-
-    // Other methods for managing events and participants
 }

@@ -8,7 +8,7 @@
                    style="-fx-background: transparent; -fx-background-color: transparent;">
             <content>
                 <VBox fx:id="form" alignment="TOP_CENTER" spacing="10" styleClass="form">
-                    <Label text="Edit Event" styleClass="form-title"/>
+                    <Label text="Create New Event" styleClass="form-title"/>
                     <TextField fx:id="titleField" promptText="Title" styleClass="text-field"/>
                     <TextArea fx:id="descField" promptText="Description" styleClass="text-area"/>
                     <DatePicker fx:id="dateField" promptText="Date" styleClass="date-picker"/>
@@ -27,7 +27,7 @@
     </center>
     <bottom>
         <HBox spacing="10" alignment="CENTER" styleClass="button-bar">
-            <Button fx:id="saveButton" text="Update" styleClass="primary-button" onAction="#handleUpdateEvent"/>
+            <Button fx:id="saveButton" text="Save" styleClass="primary-button" onAction="#handleSaveEvent"/>
             <Button fx:id="cancelButton" text="Cancel" styleClass="secondary-button" onAction="#handleCancel"/>
         </HBox>
     </bottom>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="mainContainer" prefHeight="700.0" prefWidth="900.0" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.badro.Controllers.ExperienceAdminController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+    
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #307D91; -fx-background-radius: 5;">
+        <padding>
+            <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+        </padding>
+        <Label text="Experience Management" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="18.0" />
+            </font>
+        </Label>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#onAddClicked" style="-fx-background-color: white;" text="Add Experience" />
+        <Button fx:id="btnRefresh" mnemonicParsing="false" onAction="#onRefreshClicked" style="-fx-background-color: white;" text="Refresh" />
+    </HBox>
+    
+    <!-- Search Box -->
+    <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 5;">
+        <padding>
+            <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+        </padding>
+        <Label text="Search:" />
+        <TextField fx:id="searchField" promptText="Search by title or description..." HBox.hgrow="ALWAYS" />
+        <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearchClicked" style="-fx-background-color: #307D91; -fx-text-fill: white;" text="Search" />
+    </HBox>
+    
+    <!-- Table View -->
+    <TableView fx:id="experienceTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
+            <TableColumn fx:id="titleColumn" prefWidth="200.0" text="Title" />
+            <TableColumn fx:id="userColumn" prefWidth="150.0" text="Posted By" />
+            <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Date Posted" />
+            <TableColumn fx:id="likesColumn" prefWidth="80.0" text="Likes" />
+            <TableColumn fx:id="commentsColumn" prefWidth="100.0" text="Comments" />
+            <TableColumn fx:id="actionColumn" prefWidth="150.0" text="Actions" />
+        </columns>
+    </TableView>
+    
+    <!-- Status Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 5;">
+        <padding>
+            <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+        </padding>
+        <Label fx:id="statusLabel" text="Total Experiences: 0" />
+    </HBox>
+</VBox> 

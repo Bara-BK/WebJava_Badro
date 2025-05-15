@@ -19,6 +19,7 @@
             <Button fx:id="usersBtn" text="Users" onAction="#showUsersContent" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-alignment: CENTER_LEFT; -fx-min-width: 200; -fx-padding: 10 15; -fx-cursor: hand;" />
             <Button fx:id="preferencesBtn" text="Preferences" onAction="#showPreferencesContent" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-alignment: CENTER_LEFT; -fx-min-width: 200; -fx-padding: 10 15; -fx-cursor: hand;" />
             <Button fx:id="applicationsBtn" text="Program Applications" onAction="#showApplicationsContent" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-alignment: CENTER_LEFT; -fx-min-width: 200; -fx-padding: 10 15; -fx-cursor: hand;" />
+            <Button fx:id="experiencesBtn" text="Experiences" onAction="#showExperiencesContent" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-alignment: CENTER_LEFT; -fx-min-width: 200; -fx-padding: 10 15; -fx-cursor: hand;" />
         </VBox>
     </left>
     <top>

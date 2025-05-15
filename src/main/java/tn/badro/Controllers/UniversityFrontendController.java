@@ -83,7 +83,7 @@ public class UniversityFrontendController {
         
         // Update notification badge
         updateNotificationBadge();
-        NotificationManager.getInstance().getNotifications().addListener((javafx.collections.ListChangeListener<Notification>) c -> updateNotificationBadge());
+        NotificationManager.getInstance().setOnNotificationAddedCallback(this::updateNotificationBadge);
     }
     
     /**

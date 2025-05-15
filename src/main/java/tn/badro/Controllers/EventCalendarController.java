@@ -91,12 +91,19 @@ public class EventCalendarController implements Initializable {
             if (NotificationIcon != null) NotificationIcon.setVisible(true);
             if (notificationIconContainer != null) notificationIconContainer.setVisible(true);
             updateNotificationBadge();
+            
+            // Show admin-only controls for admin users only
+            boolean isAdmin = "admin".equals(currentUser.getRoles());
+            if (createEventButton != null) createEventButton.setVisible(isAdmin);
         } else if (userDisplayName != null) {
             userDisplayName.setText("");
             userDisplayName.setVisible(false);
             if (profileButton != null) profileButton.setVisible(false);
             if (NotificationIcon != null) NotificationIcon.setVisible(false);
             if (notificationIconContainer != null) notificationIconContainer.setVisible(false);
+            
+            // Hide admin-only controls for non-logged in users
+            if (createEventButton != null) createEventButton.setVisible(false);
         }
     }
     
@@ -230,15 +237,104 @@ public class EventCalendarController implements Initializable {
     }
     
     private void displayEvents(List<Event> events) {
-        // This will be implemented to display events in the calendar
-        // For now, it's just a placeholder
+        if (calendarGrid == null) {
+            System.err.println("Calendar grid is null");
+            return;
+        }
+        
+        // Clear the calendar grid
+        calendarGrid.getChildren().clear();
+        
+        // Add day headers (Sun-Sat)
+        String[] dayNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        for (int i = 0; i < 7; i++) {
+            Label dayLabel = new Label(dayNames[i]);
+            dayLabel.setStyle("-fx-font-weight: bold; -fx-padding: 5; -fx-alignment: center;");
+            calendarGrid.add(dayLabel, i, 0);
+        }
+        
+        // Current month calendar
+        LocalDate today = LocalDate.now();
+        LocalDate firstOfMonth = today.withDayOfMonth(1);
+        int monthStartDayOfWeek = firstOfMonth.getDayOfWeek().getValue() % 7; // 0 = Sunday, 6 = Saturday
+        int daysInMonth = firstOfMonth.lengthOfMonth();
+        
+        // Create calendar cells
+        int row = 1;
+        int col = monthStartDayOfWeek;
+        
+        // Add event indicators to the calendar
+        for (int day = 1; day <= daysInMonth; day++) {
+            VBox dayCell = new VBox(5);
+            dayCell.setStyle("-fx-border-color: #e0e0e0; -fx-padding: 5; -fx-background-color: white;");
+            dayCell.setPrefHeight(80);
+            
+            // Day number
+            Label dayLabel = new Label(String.valueOf(day));
+            
+            // Highlight today
+            if (day == today.getDayOfMonth()) {
+                dayLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #4B9CD3;");
+                dayCell.setStyle("-fx-border-color: #4B9CD3; -fx-border-width: 2; -fx-padding: 5; -fx-background-color: #f0f8ff;");
+            }
+            
+            dayCell.getChildren().add(dayLabel);
+            
+            // Add events for this day
+            LocalDate currentDate = LocalDate.of(today.getYear(), today.getMonth(), day);
+            for (Event event : events) {
+                if (event.getDate() != null && event.getDate().equals(currentDate)) {
+                    Label eventLabel = new Label(event.getTitre());
+                    eventLabel.setWrapText(true);
+                    eventLabel.setMaxWidth(Double.MAX_VALUE);
+                    
+                    // Style based on event type
+                    String bgColor = "#4B9CD3"; // Default blue
+                    if (event.getType() != null) {
+                        switch (event.getType()) {
+                            case "Entertainment":
+                                bgColor = "#9C27B0"; // Purple
+                                break;
+                            case "Cultural":
+                                bgColor = "#E91E63"; // Pink
+                                break;
+                            case "Educational":
+                                bgColor = "#009688"; // Teal
+                                break;
+                            case "Sports":
+                                bgColor = "#FF9800"; // Orange
+                                break;
+                        }
+                    }
+                    
+                    eventLabel.setStyle(
+                        "-fx-background-color: " + bgColor + ";" +
+                        "-fx-text-fill: white;" +
+                        "-fx-padding: 2 5;" +
+                        "-fx-background-radius: 3;" +
+                        "-fx-font-size: 10px;"
+                    );
+                    
+                    // Make it clickable
+                    eventLabel.setOnMouseClicked(e -> openEventDetails(event.getEventId()));
+                    dayCell.getChildren().add(eventLabel);
+                }
+            }
+            
+            calendarGrid.add(dayCell, col, row);
+            
+            col++;
+            if (col > 6) {
+                col = 0;
+                row++;
+            }
+        }
     }
-
-    @FXML
-    private void handleCreateEvent() {
+    
+    private void openEventDetails(Integer eventId) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Desktop/CreateEventForm.fxml"));
-            Parent root = loader.load();
+            // Open event details in EventController
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Desktop/EventView.fxml"));
             EventController controller = new EventController(eventService, participationService);
             controller.setStage(getStage());
             if (currentUser != null) {
@@ -246,9 +342,28 @@ public class EventCalendarController implements Initializable {
             }
             loader.setController(controller);
             
-            Scene scene = new Scene(root);
+            // Load the scene
+            Scene scene = new Scene(loader.load(), 1200, 800);
+            controller.showEventView(eventId);
             getStage().setScene(scene);
-        } catch (IOException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to open event details: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleCreateEvent() {
+        try {
+            EventController controller = new EventController(eventService, participationService);
+            controller.setStage(getStage());
+            if (currentUser != null) {
+                controller.setUserInfo(currentUser);
+            }
+            
+            // Call the create event method directly
+            controller.handleCreateEvent();
+        } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Navigation Error", "Failed to open create event form: " + e.getMessage());
         }
